@@ -1,0 +1,10 @@
+__pychache__
+.vscode
+dist
+venv
+build
+cropped
+txt
+*.png
+*.jpg
+*.jpeg
