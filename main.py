@@ -1,20 +1,25 @@
 from genericpath import exists
 from os import listdir, makedirs
 from os.path import exists
-from sys import exit
-from math import ceil
 from PIL import Image
+from configparser import ConfigParser
 
-ITEMS_MARGIN = 10
-LAYOUT_WIDTH = 1754
-LAYOUT_HEIGHT = 1240
-IMAGE_WIDTH = 185
-IMAGE_HEIGHT = 165
+config = ConfigParser()
+config.read('config.ini')
+
+LAYOUT_WIDTH = int(config['LAYOUT'].get('WIDTH', 1754))
+LAYOUT_HEIGHT = int(config['LAYOUT'].get('HEIGHT', 1240))
+
+IMAGE_MARGIN = int(config['IMAGE'].get('MARGIN', 10))
+IMAGE_WIDTH = int(config['IMAGE'].get('WIDTH', 185))
+IMAGE_HEIGHT = int(config['IMAGE'].get('HEIGHT', 165))
+
 HORIZONTAL_AMOUNT = LAYOUT_WIDTH // IMAGE_WIDTH
 VERTICAL_AMOUNT = LAYOUT_HEIGHT // IMAGE_HEIGHT
 IMAGE_RESOLUTION = IMAGE_WIDTH / IMAGE_HEIGHT
-LAYOUT_PADDING_HORIZONTAL = (LAYOUT_WIDTH - IMAGE_WIDTH*HORIZONTAL_AMOUNT - HORIZONTAL_AMOUNT*ITEMS_MARGIN) // 2
-LAYOUT_PADDING_VERTICAL = (LAYOUT_HEIGHT - IMAGE_HEIGHT*VERTICAL_AMOUNT - VERTICAL_AMOUNT*ITEMS_MARGIN) // 2
+LAYOUT_PADDING_HORIZONTAL = (LAYOUT_WIDTH - IMAGE_WIDTH*HORIZONTAL_AMOUNT - HORIZONTAL_AMOUNT*IMAGE_MARGIN) // 2
+LAYOUT_PADDING_VERTICAL = (LAYOUT_HEIGHT - IMAGE_HEIGHT*VERTICAL_AMOUNT - VERTICAL_AMOUNT*IMAGE_MARGIN) // 2
+
 
 def resize_img(img):
   img_w, img_h = img.size
@@ -75,8 +80,8 @@ layout_number = 1
 pasted_counter = 0
 is_ended = False
 while not is_ended:
-  x_offset = LAYOUT_PADDING_HORIZONTAL + ITEMS_MARGIN
-  y_offset = LAYOUT_PADDING_VERTICAL + ITEMS_MARGIN
+  x_offset = LAYOUT_PADDING_HORIZONTAL + IMAGE_MARGIN
+  y_offset = LAYOUT_PADDING_VERTICAL + IMAGE_MARGIN
   layout = Image.new('RGB', [LAYOUT_WIDTH, LAYOUT_HEIGHT], 'white')
   while not is_ended and x_offset < LAYOUT_WIDTH - LAYOUT_PADDING_HORIZONTAL:
     while not is_ended and y_offset < LAYOUT_HEIGHT - LAYOUT_PADDING_VERTICAL:
@@ -86,12 +91,12 @@ while not is_ended:
         layout.paste(images[pasted_counter], (x_offset_centred, y_offset_centred), mask=images[pasted_counter].split()[3])
       except:
         layout.paste(images[pasted_counter], (x_offset_centred, y_offset_centred))
-      y_offset += IMAGE_HEIGHT + ITEMS_MARGIN
+      y_offset += IMAGE_HEIGHT + IMAGE_MARGIN
       pasted_counter += 1
       if pasted_counter >= ll:
         is_ended = True
     y_offset = LAYOUT_PADDING_VERTICAL
-    x_offset += IMAGE_WIDTH + ITEMS_MARGIN
+    x_offset += IMAGE_WIDTH + IMAGE_MARGIN
   layout.save(f'result/{layout_name}-{layout_number}.jpg')
   print(f"Файл '{layout_name}-{layout_number}.jpg' сохранен в папке 'result'")
   layout_number += 1

@@ -8,3 +8,5 @@ txt
 *.png
 *.jpg
 *.jpeg
+*.spec
+*.cpython*
