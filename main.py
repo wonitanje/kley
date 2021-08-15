@@ -1,77 +1,14 @@
 from genericpath import exists
-from os import listdir, makedirs
+from os import makedirs
 from os.path import exists
-from PIL import Image
-from configparser import ConfigParser
-
-config = ConfigParser()
-config.read('config.ini')
-
-LAYOUT_WIDTH = int(config['LAYOUT'].get('WIDTH', 1754))
-LAYOUT_HEIGHT = int(config['LAYOUT'].get('HEIGHT', 1240))
-
-IMAGE_MARGIN = int(config['IMAGE'].get('MARGIN', 10))
-IMAGE_WIDTH = int(config['IMAGE'].get('WIDTH', 185))
-IMAGE_HEIGHT = int(config['IMAGE'].get('HEIGHT', 165))
-
-HORIZONTAL_AMOUNT = LAYOUT_WIDTH // IMAGE_WIDTH
-VERTICAL_AMOUNT = LAYOUT_HEIGHT // IMAGE_HEIGHT
-IMAGE_RESOLUTION = IMAGE_WIDTH / IMAGE_HEIGHT
-LAYOUT_PADDING_HORIZONTAL = (LAYOUT_WIDTH - IMAGE_WIDTH*HORIZONTAL_AMOUNT - HORIZONTAL_AMOUNT*IMAGE_MARGIN) // 2
-LAYOUT_PADDING_VERTICAL = (LAYOUT_HEIGHT - IMAGE_HEIGHT*VERTICAL_AMOUNT - VERTICAL_AMOUNT*IMAGE_MARGIN) // 2
+from PIL import Image, ImageDraw
+import constants as const
+import utils
 
 
-def resize_img(img):
-  img_w, img_h = img.size
-  w, h = IMAGE_WIDTH, IMAGE_HEIGHT
-  img_resolution = img_w / img_h
-  if img_resolution != IMAGE_RESOLUTION and img_resolution != 1:
-    if img_resolution < 1:
-      w = int(h * img_resolution)
-    else:
-      h = int(w * img_h / img_w)
-  return img.resize([w, h], resample=0)
-
-
-def resize_images(images):
-  return [resize_img(img) for img in images]
-
-
-def get_fullname(name: str, lst: list):
-  for el in lst:
-    if el.find(name) != -1:
-      print(f'Найдено совпадение {el}\n')
-      return el
-  print(f'Не найдено совпадений для {name}\n')
-  return None
-
-
-def get_image_names():
-  folder_items = listdir()
-  image_files = []
-  print("Введите список конфет. Чтобы закончить введите '0'")
-  counter = 1
-  while True:
-    inp = input(f'{counter}: ').replace('?', '').replace('"', '').strip(' ')
-    if not inp or inp == '0': break
-    image_files.append(get_fullname(inp, folder_items))
-    counter += 1
-  return image_files
-
-
-def load_image(src):
-  img = Image.open(f'{src}')
-  img.load()
-  return img
-
-
-def get_images(file_names):
-  return [load_image(name) for name in file_names if name]
-
-
-images = resize_images(get_images(get_image_names()))
+images = utils.resize_images(utils.get_images(utils.get_image_names()))
 ll = len(images)
-print(f'Всего изображений: {ll}\nКоличество строк: {HORIZONTAL_AMOUNT}\nКоличество столбцев: {VERTICAL_AMOUNT}')
+print(f'Всего изображений: {ll}\nКоличество строк: {const.VERTICAL_AMOUNT}\nКоличество столбцев: {const.HORIZONTAL_AMOUNT}')
 layout_name = input('Введите название сгенерированной картинки: ') or 'test'
 if not exists('result'):
   makedirs('result')
@@ -80,24 +17,47 @@ layout_number = 1
 pasted_counter = 0
 is_ended = False
 while not is_ended:
-  x_offset = LAYOUT_PADDING_HORIZONTAL + IMAGE_MARGIN
-  y_offset = LAYOUT_PADDING_VERTICAL + IMAGE_MARGIN
-  layout = Image.new('RGB', [LAYOUT_WIDTH, LAYOUT_HEIGHT], 'white')
-  while not is_ended and x_offset < LAYOUT_WIDTH - LAYOUT_PADDING_HORIZONTAL:
-    while not is_ended and y_offset < LAYOUT_HEIGHT - LAYOUT_PADDING_VERTICAL:
-      x_offset_centred = x_offset + (IMAGE_WIDTH - images[pasted_counter].size[0]) // 2 
-      y_offset_centred = y_offset + (IMAGE_HEIGHT - images[pasted_counter].size[1]) // 2 
+  x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
+  y_offset = const.LAYOUT_PADDING_VERTICAL + const.BLOCK_MARGIN
+  layout = Image.new('RGB', [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255))
+
+  row = col = 0
+  while not is_ended and col < const.HORIZONTAL_AMOUNT:
+    while not is_ended and row < const.VERTICAL_AMOUNT:
+      img = images[pasted_counter]
+      x_offset_centred = x_offset + (const.IMAGE_WIDTH - img.size[0]) // 2
+      y_offset_centred = y_offset + (const.BLOCK_HEIGHT - img.size[1]) // 2
+
       try:
-        layout.paste(images[pasted_counter], (x_offset_centred, y_offset_centred), mask=images[pasted_counter].split()[3])
+        layout.paste(img, (x_offset_centred, y_offset_centred), mask=img.split()[3])
       except:
-        layout.paste(images[pasted_counter], (x_offset_centred, y_offset_centred))
-      y_offset += IMAGE_HEIGHT + IMAGE_MARGIN
+        layout.paste(img, (x_offset_centred, y_offset_centred))
+
+      text = Image.new('RGB', [const.TEXT_WIDTH, const.BLOCK_HEIGHT], (255, 255, 255))
+      drawer = ImageDraw.Draw(text)
+      text_x = text_y = 0
+      drawer.text((text_x, text_y), 'Sire', font=const.FONT['SIRE'], fill=(150, 150, 150))
+      text_y += 22
+      drawer.text((text_x, text_y), 'Name', font=const.FONT['NAME'], fill=(3, 3, 3))
+      text_y += 30
+      drawer.multiline_text((text_x, text_y), 'Description\nLine2', font=const.FONT['DESC'], fill=(3, 3, 3))
+      text_x, text_y = x_offset + const.IMAGE_WIDTH, y_offset
+      layout.paste(text, (text_x, text_y))
+
+      y_offset += const.BLOCK_HEIGHT + const.BLOCK_MARGIN
       pasted_counter += 1
+      row += 1
+
       if pasted_counter >= ll:
         is_ended = True
-    y_offset = LAYOUT_PADDING_VERTICAL
-    x_offset += IMAGE_WIDTH + IMAGE_MARGIN
-  layout.save(f'result/{layout_name}-{layout_number}.jpg')
+
+    x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
+    y_offset = const.LAYOUT_PADDING_VERTICAL
+    col += 1
+    row = 0
+
+  layout.show()
+  layout.save(f"result/{layout_name}-{layout_number}.jpg")
   print(f"Файл '{layout_name}-{layout_number}.jpg' сохранен в папке 'result'")
   layout_number += 1
 

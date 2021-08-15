@@ -1,10 +1,14 @@
 __pychache__
 .vscode
+
 dist
 venv
 build
 cropped
+images
+result
 txt
+
 *.png
 *.jpg
 *.jpeg
