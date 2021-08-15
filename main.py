@@ -27,6 +27,9 @@ while not is_ended:
       img = images[pasted_counter]
       x_offset_centred = x_offset + (const.IMAGE_WIDTH - img.size[0]) // 2
       y_offset_centred = y_offset + (const.BLOCK_HEIGHT - img.size[1]) // 2
+      sire = 'Проиводитель'
+      name = 'Название'
+      desc = 'Описание\nвторая строка'
 
       try:
         layout.paste(img, (x_offset_centred, y_offset_centred), mask=img.split()[3])
@@ -37,17 +40,17 @@ while not is_ended:
       drawer = ImageDraw.Draw(text)
 
       text_x = text_y = 0
-      drawer.text((text_x, text_y), f'Sire', font=const.TEXT['SIRE'], fill=(120, 120, 120))
+      drawer.text((text_x, text_y), sire, font=const.TEXT['SIRE'], fill=(120, 120, 120))
 
-      text_x = const.TEXT['ENUM'].getsize('Sire')[0] + 10
+      text_x = const.TEXT['ENUM'].getsize(sire)[0] + 10
       drawer.text((text_x, text_y), f'{img.amount} шт', font=const.TEXT['ENUM'], fill=(18,183,45))
 
       text_x = 0
-      text_y += const.TEXT['ENUM'].getsize('Sire')[1] + 4
-      drawer.text((text_x, text_y), 'Name', font=const.TEXT['NAME'], fill=(3, 3, 3))
+      text_y += const.TEXT['ENUM'].getsize(sire)[1] + 4
+      drawer.text((text_x, text_y), name, font=const.TEXT['NAME'], fill=(3, 3, 3))
 
-      text_y += const.TEXT['ENUM'].getsize('Name')[1] + 8
-      drawer.multiline_text((text_x, text_y), 'Description\nLine2', font=const.TEXT['DESC'], fill=(3, 3, 3))
+      text_y += const.TEXT['NAME'].getsize(name)[1] + 10
+      drawer.multiline_text((text_x, text_y), desc, font=const.TEXT['DESC'], fill=(3, 3, 3))
       text_x, text_y = x_offset + const.IMAGE_WIDTH, y_offset
       layout.paste(text, (text_x, text_y))
 
@@ -59,7 +62,7 @@ while not is_ended:
         is_ended = True
 
     x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
-    y_offset = const.LAYOUT_PADDING_VERTICAL
+    y_offset = const.LAYOUT_PADDING_VERTICAL + const.BLOCK_MARGIN
     col += 1
     row = 0
 
