@@ -35,12 +35,19 @@ while not is_ended:
 
       text = Image.new('RGB', [const.TEXT_WIDTH, const.BLOCK_HEIGHT], (255, 255, 255))
       drawer = ImageDraw.Draw(text)
+
       text_x = text_y = 0
-      drawer.text((text_x, text_y), 'Sire', font=const.FONT['SIRE'], fill=(150, 150, 150))
-      text_y += 22
-      drawer.text((text_x, text_y), 'Name', font=const.FONT['NAME'], fill=(3, 3, 3))
-      text_y += 30
-      drawer.multiline_text((text_x, text_y), 'Description\nLine2', font=const.FONT['DESC'], fill=(3, 3, 3))
+      drawer.text((text_x, text_y), f'Sire', font=const.TEXT['SIRE'], fill=(120, 120, 120))
+
+      text_x = const.TEXT['ENUM'].getsize('Sire')[0] + 10
+      drawer.text((text_x, text_y), f'{img.amount} шт', font=const.TEXT['ENUM'], fill=(18,183,45))
+
+      text_x = 0
+      text_y += const.TEXT['ENUM'].getsize('Sire')[1] + 4
+      drawer.text((text_x, text_y), 'Name', font=const.TEXT['NAME'], fill=(3, 3, 3))
+
+      text_y += const.TEXT['ENUM'].getsize('Name')[1] + 8
+      drawer.multiline_text((text_x, text_y), 'Description\nLine2', font=const.TEXT['DESC'], fill=(3, 3, 3))
       text_x, text_y = x_offset + const.IMAGE_WIDTH, y_offset
       layout.paste(text, (text_x, text_y))
 

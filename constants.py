@@ -4,10 +4,11 @@ from PIL import ImageFont
 config = ConfigParser()
 config.read('config.ini')
 
-FONT = {}
-FONT['SIRE'] = ImageFont.truetype('arial.ttf', int(config['FONT-SIZE'].get('SIRE', 18)))
-FONT['NAME'] = ImageFont.truetype('arial.ttf', int(config['FONT-SIZE'].get('NAME', 22)))
-FONT['DESC'] = ImageFont.truetype('arial.ttf', int(config['FONT-SIZE'].get('DESC', 18)))
+TEXT = {}
+TEXT['SIRE'] = ImageFont.truetype('arial.ttf', int(config['TEXT-SIZE'].get('SIRE', 18)))
+TEXT['ENUM'] = ImageFont.truetype('arial.ttf', int(config['TEXT-SIZE'].get('ENUM', 18)))
+TEXT['NAME'] = ImageFont.truetype('arial.ttf', int(config['TEXT-SIZE'].get('NAME', 22)))
+TEXT['DESC'] = ImageFont.truetype('arial.ttf', int(config['TEXT-SIZE'].get('DESC', 18)))
 
 FOLDER_NAME = config['FOLDER'].get('NAME', '')
 

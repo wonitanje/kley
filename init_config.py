@@ -14,10 +14,11 @@ config['BLOCK']['HEIGHT'] = '165'
 config['FOLDER'] = {}
 config['FOLDER']['NAME'] = 'images'
 
-config['FONT-SIZE'] = {}
-config['FONT-SIZE']['SIZE'] = '18'
-config['FONT-SIZE']['NAME'] = '22'
-config['FONT-SIZE']['DESC'] = '18'
+config['TEXT-SIZE'] = {}
+config['TEXT-SIZE']['SIRE'] = '18'
+config['TEXT-SIZE']['ENUM'] = '18'
+config['TEXT-SIZE']['NAME'] = '22'
+config['TEXT-SIZE']['DESC'] = '18'
 
 
 with open('config.ini', 'w') as configfile:
