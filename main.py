@@ -5,8 +5,9 @@ from PIL import Image, ImageDraw
 import constants as const
 import utils
 
-
-images = utils.resize_images(utils.get_images(utils.get_image_names()))
+file_names = utils.get_image_names(const.FOLDER_PATH)
+pillow_images = utils.get_images(file_names, const.FOLDER_PATH)
+images = utils.resize_images(pillow_images, const.IMAGE_WIDTH, const.BLOCK_HEIGHT, const.IMAGE_RESOLUTION)
 ll = len(images)
 print(f'Всего изображений: {ll}\nКоличество строк: {const.VERTICAL_AMOUNT}\nКоличество столбцев: {const.HORIZONTAL_AMOUNT}')
 layout_name = input('Введите название сгенерированной картинки: ') or 'test'
@@ -27,9 +28,10 @@ while not is_ended:
       img = images[pasted_counter]
       x_offset_centred = x_offset + (const.IMAGE_WIDTH - img.size[0]) // 2
       y_offset_centred = y_offset + (const.BLOCK_HEIGHT - img.size[1]) // 2
-      sire = 'Проиводитель'
-      name = 'Название'
-      desc = 'Описание\nвторая строка'
+      txt = utils.get(img.source, const.DB)
+      sire = txt['sire']
+      name = txt['name']
+      desc = txt['desc']
 
       try:
         layout.paste(img, (x_offset_centred, y_offset_centred), mask=img.split()[3])
@@ -42,16 +44,21 @@ while not is_ended:
       text_x = text_y = 0
       drawer.text((text_x, text_y), sire, font=const.TEXT['SIRE'], fill=(120, 120, 120))
 
-      text_x = const.TEXT['ENUM'].getsize(sire)[0] + 10
+      text_x = const.TEXT['SIRE'].getsize(sire)[0] + 10
       drawer.text((text_x, text_y), f'{img.amount} шт', font=const.TEXT['ENUM'], fill=(18,183,45))
 
       text_x = 0
-      text_y += const.TEXT['ENUM'].getsize(sire)[1] + 4
-      drawer.text((text_x, text_y), name, font=const.TEXT['NAME'], fill=(3, 3, 3))
+      text_y += const.TEXT['ENUM'].getsize(sire)[1] + const.TEXT_MARGIN
+      name, shift = utils.to_multiline(name, const.TEXT['NAME'], const.TEXT_WIDTH)
+      drawer.multiline_text((text_x, text_y), name, font=const.TEXT['NAME'], fill=(3, 3, 3))
 
-      text_y += const.TEXT['NAME'].getsize(name)[1] + 10
+      text_y += shift + const.TEXT_MARGIN
+      desc, shift = utils.to_multiline(desc, const.TEXT['DESC'], const.TEXT_WIDTH)
       drawer.multiline_text((text_x, text_y), desc, font=const.TEXT['DESC'], fill=(3, 3, 3))
-      text_x, text_y = x_offset + const.IMAGE_WIDTH, y_offset
+      text_height = text_y + shift
+
+      text_x = x_offset + const.IMAGE_WIDTH + const.IMAGE_TEXT_MARGIN
+      text_y = y_offset + (const.BLOCK_HEIGHT - text_height) // 2
       layout.paste(text, (text_x, text_y))
 
       y_offset += const.BLOCK_HEIGHT + const.BLOCK_MARGIN
@@ -66,7 +73,6 @@ while not is_ended:
     col += 1
     row = 0
 
-  layout.show()
   layout.save(f"result/{layout_name}-{layout_number}.jpg")
   print(f"Файл '{layout_name}-{layout_number}.jpg' сохранен в папке 'result'")
   layout_number += 1

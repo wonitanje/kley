@@ -1,3 +1,4 @@
+from json import dumps
 from configparser import ConfigParser
 
 config = ConfigParser()
@@ -11,14 +12,19 @@ config['BLOCK']['MARGIN'] = '10'
 config['BLOCK']['WIDTH'] = '340'
 config['BLOCK']['HEIGHT'] = '165'
 
-config['FOLDER'] = {}
-config['FOLDER']['NAME'] = 'images'
+config['IMAGE_TEXT'] = {}
+config['IMAGE_TEXT']['MARGIN'] = '10'
+config['IMAGE_TEXT']['RESOLUTION'] = '1:2'
 
-config['TEXT-SIZE'] = {}
-config['TEXT-SIZE']['SIRE'] = '18'
-config['TEXT-SIZE']['ENUM'] = '18'
-config['TEXT-SIZE']['NAME'] = '22'
-config['TEXT-SIZE']['DESC'] = '18'
+config['FOLDER'] = {}
+config['FOLDER']['PATH'] = './'
+
+config['TEXT'] = {}
+config['TEXT']['MARGIN'] = '4'
+config['TEXT']['SIRE'] = '16'
+config['TEXT']['ENUM'] = '16'
+config['TEXT']['NAME'] = '19'
+config['TEXT']['DESC'] = '15'
 
 
 with open('config.ini', 'w') as configfile:
