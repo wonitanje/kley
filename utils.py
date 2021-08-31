@@ -1,17 +1,28 @@
 from os import listdir
 from PIL import Image
+from regexp import compile, strip_format, format
 
 def resize_img(image: Image, width: int, height: int, resolution: float):
   img_w, img_h = image.size
   img_resolution = img_w / img_h
-  if img_resolution != resolution and img_resolution != 1:
+  if img_resolution == 1:
+    width = height = min(width, height)
+  elif img_resolution != resolution:
     if img_resolution < 1:
-      width = int(height * img_resolution)
+      new_width = int(height * img_resolution)
+      if (new_width > width):
+        height = int(width * img_h / img_w)
+      else: width = new_width
     else:
-      height = int(width * img_h / img_w)
+      new_height = int(width * img_h / img_w)
+      if (new_height > height): 
+        width = int(height * img_resolution)
+      else: height = new_height
+
   resized = image.resize([width, height], resample=0)
   resized.amount = image.amount
   resized.source = image.source
+  resized.key = image.key
   return resized
 
 
@@ -19,70 +30,98 @@ def resize_images(images: list, width: int, height: int, resolution: float):
   return [resize_img(img, width, height, resolution) for img in images]
 
 
-def get_fullname(name: str, lst: list):
-  for el in lst:
-    if el.find(name) != -1:
-      print(f'Найдено совпадение {el}\n')
-      return el
-  print(f'Не найдено совпадений для {name}\n')
-  return None
+def find(lst: list, item):
+  try:
+    idx = lst.index(item)
+  except:
+    idx = -1
+  return idx
 
 
-def get_image_names(path: str):
-  folder_items = listdir(path)
+def get_full_filename(name: list, path: str):
+  folder_items = [file for file in listdir(path) if format(file) in ['.png', '.jpg', '.jpeg']]
+  compiled_folder_items = [strip_format(compile(el)) for el in folder_items]
+  idx = find(compiled_folder_items, compile(name[0]))
+  if idx == -1:
+    idx = find(compiled_folder_items, compile(name[1]))
+  if idx == -1:
+    print(f'Не найдено совпадений для {name}\n')
+    return None
+  print(f'Найдено совпадение {folder_items[idx]}\n')
+  return folder_items[idx]
+
+
+def get_filenames(path: str, db: dict):
   image_files = []
   print("Введите список конфет. Чтобы закончить введите '0'")
   counter = 1
   while True:
-    inp = input(f'{counter}: ').replace('?', '').replace('"', '').strip(' ') # To fix
+    inp = input(f'{counter}: ')
     counter += 1
-    if not inp or inp == '0': break
-    if inp == None: continue
-    image_files.append(get_fullname(inp, folder_items))
+    if inp == '0': break
+    filename = db_filename(inp, db)
+    if filename == None: continue
+    db_key = compile(filename[0])
+    fullname = get_full_filename(filename, path)
+    if fullname == None: continue
+    image_files.append([fullname, db_key])
 
   filtred = []
-  for img in image_files:
+  for [img, db_key] in image_files:
     if len(filtred) > 0:
-      images, _ = zip(*filtred)
+      images, _, _ = zip(*filtred) 
       if img in images: continue
-    amount = image_files.count(img)
-    filtred.append([img, amount])
+    amount = image_files.count([img, db_key])
+    filtred.append([img, amount, db_key])
   return filtred
 
 
-def load_image(source: str, amount: int, path: str):
-  img = Image.open(f'{path}/{source}')
+def load_image(source: str, amount: int, key: str, path: str):
+  img = Image.open(f'{path}/{source}').convert('RGBA')
   img.load()
   img.amount = amount
   img.source = source
+  img.key = key
   return img
 
 
-def get_images(name_amount_pairs: list, path: str):
-  return [load_image(src, amount, path) for src, amount in name_amount_pairs]
+def get_images(name_amount_keyDB: list, path: str):
+  print('\nЗагружаю изображения\n')
+  return [load_image(src, amount, key, path) for src, amount, key in name_amount_keyDB]
 
 
-def get(file_name: str, db: dict):
-  ind = file_name.rindex('.')
-  image_name = file_name[:ind]
-  return db[image_name]
+def db_name(key: str, db: dict):
+  return db[key]
 
 
-def to_multiline(line, font, width):
-  line_height = font.getsize(line)[1]
+def db_filename(name: str, db: dict):
+  item = db.get(compile(name), None)
+  if item is None:
+    print(f'{name} не найдено в базе')
+    return None
+  return item['name'], item['image']
+
+
+def to_multiline(line, font, width, lines=1000):
+  line_height = font.getsize(line)[1] - 2
   words = line.split()
-  words_beg = shift = 0
+  words_beg = shift = iter = 0
   words_len = words_end = len(words)
 
-  while words_beg < words_len - 1:
+  while words_beg < words_len:
     line_width = font.getsize(''.join(words[words_beg:words_end]))[0]
-    while line_width > width - 10:
+    while line_width > width - 15:
       words_end -= 1
       line_width = font.getsize(''.join(words[words_beg:words_end]))[0]
+    lines -= 1
+    words_beg = words_end if (words_beg != words_end) else words_end + 1
+    words[words_end - 1] += '\n'
+    iter += 1
     shift += line_height
-    words_beg = words_end - 1 if words_end - words_beg != 1 else words_end
+    if lines == 0:
+      words = words[:words_beg + 1]
+      break
     words_end = words_len
-    words[words_beg] += '\n'
 
   line = ''.join(map(lambda el: el if '\n' in el else f'{el} ', words))
   return line, shift

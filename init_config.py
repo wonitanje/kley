@@ -21,10 +21,10 @@ config['FOLDER']['PATH'] = './'
 
 config['TEXT'] = {}
 config['TEXT']['MARGIN'] = '4'
-config['TEXT']['SIRE'] = '16'
-config['TEXT']['ENUM'] = '16'
-config['TEXT']['NAME'] = '19'
-config['TEXT']['DESC'] = '15'
+config['TEXT']['SIRE'] = '15'
+config['TEXT']['ENUM'] = '15'
+config['TEXT']['NAME'] = '18'
+config['TEXT']['DESC'] = '14'
 
 
 with open('config.ini', 'w') as configfile:

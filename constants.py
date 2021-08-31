@@ -3,7 +3,7 @@ from PIL import ImageFont
 import json
 import default_constants as default
 
-with open('db.json', 'r', encoding='1251') as json_file:
+with open('db.json', 'r', encoding='utf-8') as json_file:
   DB = json.load(json_file)
 
 config = ConfigParser()

@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 import constants as const
 import utils
 
-file_names = utils.get_image_names(const.FOLDER_PATH)
+file_names = utils.get_filenames(const.FOLDER_PATH, const.DB)
 pillow_images = utils.get_images(file_names, const.FOLDER_PATH)
 images = utils.resize_images(pillow_images, const.IMAGE_WIDTH, const.BLOCK_HEIGHT, const.IMAGE_RESOLUTION)
 ll = len(images)
@@ -28,17 +28,20 @@ while not is_ended:
       img = images[pasted_counter]
       x_offset_centred = x_offset + (const.IMAGE_WIDTH - img.size[0]) // 2
       y_offset_centred = y_offset + (const.BLOCK_HEIGHT - img.size[1]) // 2
-      txt = utils.get(img.source, const.DB)
+      txt = utils.db_name(img.key, const.DB)
       sire = txt['sire']
-      name = txt['name']
-      desc = txt['desc']
+      name = txt['name'].replace('гр)', 'г)').replace(' г)', 'г)')
+      desc = txt.get('description', None)
+      weight = txt.get('weight', None)
+      if weight is not None and weight not in name:
+        name += f' ({weight}г)'
 
       try:
         layout.paste(img, (x_offset_centred, y_offset_centred), mask=img.split()[3])
       except:
         layout.paste(img, (x_offset_centred, y_offset_centred))
 
-      text = Image.new('RGB', [const.TEXT_WIDTH, const.BLOCK_HEIGHT], (255, 255, 255))
+      text = Image.new('RGBA', [const.TEXT_WIDTH, const.BLOCK_HEIGHT], (255, 255, 255))
       drawer = ImageDraw.Draw(text)
 
       text_x = text_y = 0
@@ -49,13 +52,14 @@ while not is_ended:
 
       text_x = 0
       text_y += const.TEXT['ENUM'].getsize(sire)[1] + const.TEXT_MARGIN
-      name, shift = utils.to_multiline(name, const.TEXT['NAME'], const.TEXT_WIDTH)
+      name, shift = utils.to_multiline(name, const.TEXT['NAME'], const.TEXT_WIDTH, 4)
       drawer.multiline_text((text_x, text_y), name, font=const.TEXT['NAME'], fill=(3, 3, 3))
 
-      text_y += shift + const.TEXT_MARGIN
-      desc, shift = utils.to_multiline(desc, const.TEXT['DESC'], const.TEXT_WIDTH)
-      drawer.multiline_text((text_x, text_y), desc, font=const.TEXT['DESC'], fill=(3, 3, 3))
-      text_height = text_y + shift
+      if desc is not None:
+        text_y += shift + const.TEXT_MARGIN
+        desc, shift = utils.to_multiline(desc, const.TEXT['DESC'], const.TEXT_WIDTH)
+        drawer.multiline_text((text_x, text_y), desc, font=const.TEXT['DESC'], fill=(3, 3, 3))
+        text_height = text_y + shift
 
       text_x = x_offset + const.IMAGE_WIDTH + const.IMAGE_TEXT_MARGIN
       text_y = y_offset + (const.BLOCK_HEIGHT - text_height) // 2
@@ -73,7 +77,7 @@ while not is_ended:
     col += 1
     row = 0
 
-  layout.save(f"result/{layout_name}-{layout_number}.jpg")
+  layout.convert('RGB').save(f"result/{layout_name}-{layout_number}.jpg")
   print(f"Файл '{layout_name}-{layout_number}.jpg' сохранен в папке 'result'")
   layout_number += 1
 

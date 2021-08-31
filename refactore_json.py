@@ -1,12 +1,13 @@
 import json
+from regexp import compile
 
-with open('inventory.json', 'r', encoding='1251') as json_file:
-  # print(json_file.read())
-  data = json.load(json_file)['sweet']
-  # print(data)
+with open('inventory.json', 'r', encoding='utf-8') as json_file:
+  js = json.load(json_file)
+  dicts = js[js.keys()[0]]
 
-with open('refactored.json', 'w', encoding='1251') as json_file:
-  for item in data:
-    item['image'] = item['image'].lower().replace(',', '').replace(' ', '_')
-    # print(json.dump(item, ))
-    json_file.write(f'{json.dumps(item, ensure_ascii=False)},\n')
+with open('refactored.json', 'w', encoding='utf-8') as json_file:
+  db = {}
+  for dict in dicts:
+    key = compile(dict['name'])
+    db[key] = dict
+  json.dump(db, json_file, ensure_ascii=False)
