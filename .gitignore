@@ -9,6 +9,7 @@ images
 result
 txt
 
+*.ini
 *.png
 *.jpg
 *.jpeg

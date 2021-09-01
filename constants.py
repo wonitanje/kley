@@ -1,9 +1,15 @@
 from configparser import ConfigParser
 from PIL import ImageFont
+from os import listdir
 import json
 import default_constants as default
 
-with open('db.json', 'r', encoding='utf-8') as json_file:
+for file in listdir():
+  if 'db.json' in file:
+    db_filename = file
+    break
+
+with open(db_filename, 'r', encoding='utf-8') as json_file:
   DB = json.load(json_file)
 
 config = ConfigParser()

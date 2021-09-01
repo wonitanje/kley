@@ -17,10 +17,10 @@ config['IMAGE_TEXT']['MARGIN'] = '10'
 config['IMAGE_TEXT']['RESOLUTION'] = '1:2'
 
 config['FOLDER'] = {}
-config['FOLDER']['PATH'] = './'
+config['FOLDER']['PATH'] = '../'
 
 config['TEXT'] = {}
-config['TEXT']['MARGIN'] = '4'
+config['TEXT']['MARGIN'] = '-2'
 config['TEXT']['SIRE'] = '15'
 config['TEXT']['ENUM'] = '15'
 config['TEXT']['NAME'] = '18'

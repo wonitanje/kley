@@ -52,12 +52,12 @@ while not is_ended:
 
       text_x = 0
       text_y += const.TEXT['ENUM'].getsize(sire)[1] + const.TEXT_MARGIN
-      name, shift = utils.to_multiline(name, const.TEXT['NAME'], const.TEXT_WIDTH, 4)
+      name, shift = utils.to_multiline(name, const.TEXT['NAME'], const.TEXT_WIDTH, const.TEXT_MARGIN, 2)
       drawer.multiline_text((text_x, text_y), name, font=const.TEXT['NAME'], fill=(3, 3, 3))
 
       if desc is not None:
         text_y += shift + const.TEXT_MARGIN
-        desc, shift = utils.to_multiline(desc, const.TEXT['DESC'], const.TEXT_WIDTH)
+        desc, shift = utils.to_multiline(desc, const.TEXT['DESC'], const.TEXT_WIDTH, const.TEXT_MARGIN)
         drawer.multiline_text((text_x, text_y), desc, font=const.TEXT['DESC'], fill=(3, 3, 3))
         text_height = text_y + shift
 

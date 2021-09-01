@@ -61,7 +61,7 @@ def get_filenames(path: str, db: dict):
     if inp == '0': break
     filename = db_filename(inp, db)
     if filename == None: continue
-    db_key = compile(filename[0])
+    db_key = compile(filename[2])
     fullname = get_full_filename(filename, path)
     if fullname == None: continue
     image_files.append([fullname, db_key])
@@ -95,15 +95,19 @@ def db_name(key: str, db: dict):
 
 
 def db_filename(name: str, db: dict):
-  item = db.get(compile(name), None)
+  db_key = compile(name)
+  item = db.get(db_key, None)
   if item is None:
+    for [key, value] in db.items():
+      if name in value['name'] or value['name'] in name or name in value['image'] or value['image'] in name:
+        return value['name'], value['image'], key
     print(f'{name} не найдено в базе')
     return None
-  return item['name'], item['image']
+  return item['name'], item['image'], db_key
 
 
-def to_multiline(line, font, width, lines=1000):
-  line_height = font.getsize(line)[1] - 2
+def to_multiline(line, font, width, margin, lines=1000):
+  line_height = font.getsize(line)[1]
   words = line.split()
   words_beg = shift = iter = 0
   words_len = words_end = len(words)
@@ -117,7 +121,7 @@ def to_multiline(line, font, width, lines=1000):
     words_beg = words_end if (words_beg != words_end) else words_end + 1
     words[words_end - 1] += '\n'
     iter += 1
-    shift += line_height
+    shift += line_height + margin
     if lines == 0:
       words = words[:words_beg + 1]
       break
