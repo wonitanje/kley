@@ -106,11 +106,12 @@ def db_filename(name: str, db: dict):
   return item['name'], item['image'], db_key
 
 
-def to_multiline(line, font, width, margin, lines=1000):
+def to_multiline(line, font, width, lines=1000):
   line_height = font.getsize(line)[1]
   words = line.split()
   words_beg = shift = iter = 0
   words_len = words_end = len(words)
+  multiline_shifter = 0
 
   while words_beg < words_len:
     line_width = font.getsize(''.join(words[words_beg:words_end]))[0]
@@ -121,9 +122,10 @@ def to_multiline(line, font, width, margin, lines=1000):
     words_beg = words_end if (words_beg != words_end) else words_end + 1
     words[words_end - 1] += '\n'
     iter += 1
-    shift += line_height + margin
-    if lines == 0:
-      words = words[:words_beg + 1]
+    shift += line_height + multiline_shifter
+    multiline_shifter = -2
+    if lines == 0: 
+      words = words[:words_end]
       break
     words_end = words_len
 

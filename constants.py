@@ -23,7 +23,8 @@ if exists:
   TEXT['ENUM'] = ImageFont.truetype('arial.ttf', int(config['TEXT'].get('ENUM', default.ENUM_SIZE)))
   TEXT['NAME'] = ImageFont.truetype('arial.ttf', int(config['TEXT'].get('NAME', default.NAME_SIZE)))
   TEXT['DESC'] = ImageFont.truetype('arial.ttf', int(config['TEXT'].get('DESC', default.DESC_SIZE)))
-  TEXT_MARGIN = int(config['TEXT'].get('MARGIN', 4))
+  TEXT_MARGIN = int(config['TEXT'].get('MARGIN', default.TEXT_MARGIN))
+  NAME_LINES = int(config['TEXT'].get('NAME_MAX_LINES', default.NAME_LINES))
 else:
   TEXT = {
     'SIRE': default.SIRE_SIZE,
@@ -31,6 +32,8 @@ else:
     'NAME': default.NAME_SIZE,
     'DESC': default.DESC_SIZE
   }
+  TEXT_MARGIN = default.TEXT_MARGIN
+  NAME_LINES = default.NAME_LINES
 
 
 try:

@@ -20,11 +20,12 @@ config['FOLDER'] = {}
 config['FOLDER']['PATH'] = '../'
 
 config['TEXT'] = {}
-config['TEXT']['MARGIN'] = '-2'
+config['TEXT']['MARGIN'] = '4'
 config['TEXT']['SIRE'] = '15'
 config['TEXT']['ENUM'] = '15'
 config['TEXT']['NAME'] = '18'
 config['TEXT']['DESC'] = '14'
+config['TEXT']['NAME_MAX_LINES'] = '4'
 
 
 with open('config.ini', 'w') as configfile:
