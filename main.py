@@ -29,7 +29,6 @@ while not is_ended:
   x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
   y_offset = const.LAYOUT_PADDING_VERTICAL + const.BLOCK_MARGIN
   layout = Image.new('RGB', [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255))
-  # Special background
   layout.paste(bg, (0, 0))
   # Layout number / layouts amount
   text = Image.new('RGB', (150, 60), (255, 255, 255))
