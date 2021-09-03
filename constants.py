@@ -4,37 +4,45 @@ from os import listdir
 import json
 import default_constants as default
 
-for file in listdir():
+for file in listdir('assets'):
   if 'db.json' in file:
     db_filename = file
     break
 
-with open(db_filename, 'r', encoding='utf-8') as json_file:
+with open(f'assets/{db_filename}', 'r', encoding='utf-8') as json_file:
   DB = json.load(json_file)
 
 config = ConfigParser()
 config.read('config.ini')
 
+try:
+  PRIMARY_FONT = config['FONT'].get('MAIN', default.PRIMARY_FONT)
+  SECOND_FONT = config['FONT'].get('ADD', default.PRIMARY_FONT)
+except:
+  PRIMARY_FONT = default.PRIMARY_FONT
+  SECOND_FONT = default.SECOND_FONT
+
 try: exists = config['TEXT']
 except: exists = False
 if exists:
   TEXT = {}
-  TEXT['SIRE'] = ImageFont.truetype('arial.ttf', int(config['TEXT'].get('SIRE', default.SIRE_SIZE)))
-  TEXT['ENUM'] = ImageFont.truetype('arial.ttf', int(config['TEXT'].get('ENUM', default.ENUM_SIZE)))
-  TEXT['NAME'] = ImageFont.truetype('arial.ttf', int(config['TEXT'].get('NAME', default.NAME_SIZE)))
-  TEXT['DESC'] = ImageFont.truetype('arial.ttf', int(config['TEXT'].get('DESC', default.DESC_SIZE)))
+  TEXT['SIRE'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('SIRE', default.SIRE_SIZE)))
+  TEXT['ENUM'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('ENUM', default.ENUM_SIZE)))
+  TEXT['NAME'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('NAME', default.NAME_SIZE)))
+  TEXT['DESC'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('DESC', default.DESC_SIZE)))
   TEXT_MARGIN = int(config['TEXT'].get('MARGIN', default.TEXT_MARGIN))
   NAME_LINES = int(config['TEXT'].get('NAME_MAX_LINES', default.NAME_LINES))
 else:
   TEXT = {
-    'SIRE': default.SIRE_SIZE,
-    'ENUM': default.ENUM_SIZE,
-    'NAME': default.NAME_SIZE,
-    'DESC': default.DESC_SIZE
+    'SIRE': ImageFont.truetype(PRIMARY_FONT, default.SIRE_SIZE),
+    'ENUM': ImageFont.truetype(PRIMARY_FONT, default.ENUM_SIZE),
+    'NAME': ImageFont.truetype(PRIMARY_FONT, default.NAME_SIZE),
+    'DESC': ImageFont.truetype(PRIMARY_FONT, default.DESC_SIZE)
   }
   TEXT_MARGIN = default.TEXT_MARGIN
   NAME_LINES = default.NAME_LINES
-
+TEXT['NUMERATOR'] = ImageFont.truetype(SECOND_FONT, default.NUMERATOR_SIZE)
+TEXT['WEIGHT'] = ImageFont.truetype(SECOND_FONT, default.WEIGHT_SIZE)
 
 try:
   FOLDER_PATH = config['FOLDER'].get('PATH', default.FOLDER_PATH)
@@ -47,9 +55,15 @@ except: exists = False
 if exists:
   LAYOUT_WIDTH = int(config['LAYOUT'].get('WIDTH', default.LAYOUT_WIDTH))
   LAYOUT_HEIGHT = int(config['LAYOUT'].get('HEIGHT', default.LAYOUT_HEIGHT))
+  LAYOUT_PADDING_V = int(config['LAYOUT'].get('PADDING_V', default.LAYOUT_PADDING_V))
+  LAYOUT_PADDING_H = int(config['LAYOUT'].get('PADDING_H', default.LAYOUT_PADDING_H))
+  LAYOUT_BACKGROUND = config['LAYOUT'].get('LAYOUT_BACKGROUND', default.LAYOUT_BACKGROUND)
 else:
   LAYOUT_WIDTH = default.LAYOUT_WIDTH
   LAYOUT_HEIGHT = default.LAYOUT_HEIGHT
+  LAYOUT_PADDING_H = default.LAYOUT_PADDING_H
+  LAYOUT_PADDING_V = default.LAYOUT_PADDING_V
+  LAYOUT_BACKGROUND = default.LAYOUT_BACKGROUND
 
 
 try: exists = config['BLOCK']
@@ -78,8 +92,10 @@ IMAGE_TEXT_RESOLUTION.append(IMAGE_TEXT_RESOLUTION[0] + IMAGE_TEXT_RESOLUTION[1]
 IMAGE_WIDTH = int(BLOCK_WIDTH / IMAGE_TEXT_RESOLUTION[2] * IMAGE_TEXT_RESOLUTION[0] - IMAGE_TEXT_MARGIN // 2)
 TEXT_WIDTH = int(BLOCK_WIDTH / IMAGE_TEXT_RESOLUTION[2] * IMAGE_TEXT_RESOLUTION[1] - IMAGE_TEXT_MARGIN // 2)
 
-HORIZONTAL_AMOUNT = LAYOUT_WIDTH // BLOCK_WIDTH
-VERTICAL_AMOUNT = LAYOUT_HEIGHT // BLOCK_HEIGHT
+HORIZONTAL_AMOUNT = (LAYOUT_WIDTH - LAYOUT_PADDING_H * 2) // BLOCK_WIDTH
+print(f'{LAYOUT_WIDTH} - {LAYOUT_PADDING_H * 2} // {BLOCK_WIDTH} = {(LAYOUT_WIDTH - LAYOUT_PADDING_H * 2) // BLOCK_WIDTH}')
+VERTICAL_AMOUNT = (LAYOUT_HEIGHT - LAYOUT_PADDING_V * 2) // BLOCK_HEIGHT
+print(f'{LAYOUT_HEIGHT} - {LAYOUT_PADDING_V * 2} // {BLOCK_HEIGHT} = {(LAYOUT_HEIGHT - LAYOUT_PADDING_V * 2) // BLOCK_HEIGHT}')
 IMAGE_RESOLUTION = IMAGE_WIDTH / BLOCK_HEIGHT
-LAYOUT_PADDING_HORIZONTAL = (LAYOUT_WIDTH - BLOCK_WIDTH*HORIZONTAL_AMOUNT - HORIZONTAL_AMOUNT*BLOCK_MARGIN) // 2
-LAYOUT_PADDING_VERTICAL = (LAYOUT_HEIGHT - BLOCK_HEIGHT*VERTICAL_AMOUNT - VERTICAL_AMOUNT*BLOCK_MARGIN) // 2
+LAYOUT_PADDING_HORIZONTAL = LAYOUT_PADDING_H + ((LAYOUT_WIDTH - LAYOUT_PADDING_H * 2) - BLOCK_WIDTH*HORIZONTAL_AMOUNT - HORIZONTAL_AMOUNT*BLOCK_MARGIN) // 2
+LAYOUT_PADDING_VERTICAL = LAYOUT_PADDING_V + ((LAYOUT_HEIGHT - LAYOUT_PADDING_V * 2) - BLOCK_HEIGHT*VERTICAL_AMOUNT - VERTICAL_AMOUNT*BLOCK_MARGIN) // 2

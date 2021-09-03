@@ -1,11 +1,11 @@
 import json
 from regexp import compile
 
-with open('inventory.json', 'r', encoding='utf-8') as json_file:
+with open('assets/inventory.json', 'r', encoding='utf-8') as json_file:
   js = json.load(json_file)
   dicts = js[list(js.keys())[0]]
 
-with open('refactored.json', 'w', encoding='utf-8') as json_file:
+with open('assets/refactored.json', 'w', encoding='utf-8') as json_file:
   db = {}
   for d in dicts:
     key = compile(d['image'].strip())

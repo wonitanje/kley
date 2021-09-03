@@ -78,7 +78,7 @@ def get_filenames(path: str, db: dict):
 
 def load_image(source: str, amount: int, key: str, path: str):
   img = Image.open(f'{path}/{source}').convert('RGBA')
-  img.load()
+  # img.load()
   img.amount = amount
   img.source = source
   img.key = key

@@ -1,7 +1,9 @@
+from default_constants import LAYOUT_HEIGHT
 from genericpath import exists
 from os import makedirs
 from os.path import exists
 from PIL import Image, ImageDraw
+from math import ceil
 import constants as const
 import utils
 
@@ -15,12 +17,27 @@ if not exists('result'):
   makedirs('result')
 
 layout_number = 1
+layouts_amount = ceil(ll / (const.HORIZONTAL_AMOUNT * const.VERTICAL_AMOUNT))
 pasted_counter = 0
 is_ended = False
+try:
+  bg = Image.open(const.LAYOUT_BACKGROUND).resize((const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT))
+except:
+  print(f'Не удалось загрузить фон {const.LAYOUT_BACKGROUND}')
+
 while not is_ended:
   x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
   y_offset = const.LAYOUT_PADDING_VERTICAL + const.BLOCK_MARGIN
   layout = Image.new('RGB', [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255))
+  # Special background
+  layout.paste(bg, (0, 0))
+  # Layout number / layouts amount
+  text = Image.new('RGB', (150, 60), (255, 255, 255))
+  drawer = ImageDraw.Draw(text)
+  numerator = f'{layout_number} / {layouts_amount}'
+  numerator_w = const.TEXT['NUMERATOR'].getsize(numerator)[0]
+  drawer.text((150 - numerator_w, 0), numerator, font=const.TEXT['NUMERATOR'], fill=(3, 3, 3))
+  layout.paste(text, (ceil(const.LAYOUT_WIDTH * 0.923), ceil(const.LAYOUT_HEIGHT * 0.95)))
 
   row = col = 0
   while not is_ended and col < const.HORIZONTAL_AMOUNT:
@@ -40,6 +57,7 @@ while not is_ended:
         layout.paste(img, (x_offset_centred, y_offset_centred), mask=img.split()[3])
       except:
         layout.paste(img, (x_offset_centred, y_offset_centred))
+      img.close()
 
       text = Image.new('RGBA', [const.TEXT_WIDTH, const.BLOCK_HEIGHT], (255, 255, 255))
       drawer = ImageDraw.Draw(text)
