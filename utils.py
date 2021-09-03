@@ -98,7 +98,8 @@ def db_filename(name: str, db: dict):
   item = db.get(db_key, None)
   if item is None:
     for [key, value] in db.items():
-      if name in value['name'] or value['name'] in name or name in value['image'] or value['image'] in name:
+      # if name in value['name'] or value['name'] in name or name in value['image'] or value['image'] in name:
+      if compile(name) == compile(value['name']) or compile(name) == compile(value['image']):
         return value['name'], value['image'], key
     print(f'{name} не найдено в базе')
     return None
