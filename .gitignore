@@ -9,9 +9,9 @@ result
 txt
 
 *.ini
-*.png
-*.jpg
-*.jpeg
+# *.png
+# *.jpg
+# *.jpeg
 *.spec
 *.cpython*
 
