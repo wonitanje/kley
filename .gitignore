@@ -9,6 +9,7 @@ result
 txt
 
 *.ini
+*.zip
 # *.png
 # *.jpg
 # *.jpeg
