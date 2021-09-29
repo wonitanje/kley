@@ -3,16 +3,31 @@ from os import listdir, makedirs
 from os.path import exists
 from functools import reduce
 
+def strip_format(input: str):
+  if '.' not in input:
+    return None
+  idx = input.rindex('.')
+  return input[:idx].lower()
+
 # Create result folder if not exist
-if not exists('cropped'):
-  makedirs('cropped')
+result_folder_name = 'cropped'
+if not exists(result_folder_name):
+  makedirs(result_folder_name)
 
 skipped = []
 broken = []
 success = 0
 
+folder_list = listdir()
+if (int(input('Выберите режим:\n [1] Обработать все изображения\n [2] Обработать только недостающие изображения\n Введите 1 или 2:')) == 2):
+  print(f"Обрабатываю только недостающие в папке '{result_folder_name}' изображения")
+  processed_list = [strip_format(item) for item in listdir(result_folder_name)]
+  folder_list = [strip_format(item) for item in folder_list if item not in processed_list]
+else: print('Обрабатываю все изображения в текущей папке')
+print(*folder_list)
+
 # For each image in folder
-for img_name in listdir():
+for img_name in folder_list:
   format = img_name.lower()[img_name.rfind('.') + 1:]
   if not format in ['png', 'jpg', 'jpeg']:
     skipped.append(img_name)
