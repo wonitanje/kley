@@ -16,3 +16,4 @@ txt
 *.cpython*
 
 !bg.png
+test.py

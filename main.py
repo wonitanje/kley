@@ -1,4 +1,3 @@
-from default_constants import LAYOUT_HEIGHT
 from genericpath import exists
 from os import makedirs
 from os.path import exists
@@ -11,20 +10,22 @@ def main():
   file_names = utils.get_filenames(const.FOLDER_PATH, const.DB)
   pillow_images = utils.get_images(file_names, const.FOLDER_PATH)
   images = utils.resize_images(pillow_images, const.IMAGE_WIDTH, const.BLOCK_HEIGHT, const.IMAGE_RESOLUTION)
-  ll = len(images)
-  print(f'Всего изображений: {ll}\nКоличество строк: {const.VERTICAL_AMOUNT}\nКоличество столбцев: {const.HORIZONTAL_AMOUNT}')
-  layout_name = input('Введите название сгенерированной картинки: ') or 'test'
+  total_amount = len(images)
+  print(f' Всего изображений: {total_amount}\n Количество строк: {const.VERTICAL_AMOUNT}\n Количество столбцев: {const.HORIZONTAL_AMOUNT}')
+  total_weight = int(input('- Введите вес подарка: ').strip())
+  total_price = int(input('- Введите цену подарка: ').strip())
+  layout_name = input('- Введите название сгенерированной картинки: ') or 'test'
   if not exists('result'):
     makedirs('result')
 
   layout_number = 1
-  layouts_amount = ceil(ll / (const.HORIZONTAL_AMOUNT * const.VERTICAL_AMOUNT))
+  layouts_amount = ceil(total_amount / (const.HORIZONTAL_AMOUNT * const.VERTICAL_AMOUNT))
   pasted_counter = 0
   is_ended = False
   try:
     bg = Image.open(const.LAYOUT_BACKGROUND).resize((const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT))
   except:
-    print(f'Не удалось загрузить фон {const.LAYOUT_BACKGROUND}')
+    print(f' Не удалось загрузить фон {const.LAYOUT_BACKGROUND}')
 
   while not is_ended:
     x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
@@ -32,12 +33,29 @@ def main():
     layout = Image.new('RGB', [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255))
     layout.paste(bg, (0, 0))
     # Layout number / layouts amount
-    text = Image.new('RGB', (150, 60), (255, 255, 255))
-    drawer = ImageDraw.Draw(text)
-    numerator = f'{layout_number} / {layouts_amount}'
-    numerator_w = const.TEXT['NUMERATOR'].getsize(numerator)[0]
-    drawer.text((150 - numerator_w, 0), numerator, font=const.TEXT['NUMERATOR'], fill=(3, 3, 3))
-    layout.paste(text, (ceil(const.LAYOUT_WIDTH * 0.923), ceil(const.LAYOUT_HEIGHT * 0.95)))
+    drawer_font = const.TEXT['NUMERATOR']
+    drawer_text = f'{layout_number} / {layouts_amount}'
+    drawer_text_width = drawer_font.getsize(drawer_text)[0]
+    drawer_size = (150, 60)
+    drawer_position = (ceil(const.LAYOUT_WIDTH * 0.923), ceil(const.LAYOUT_HEIGHT * 0.95))
+    layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font, ((drawer_size[0] - drawer_text_width) // 2, 0), drawer_position))
+    # Price
+    drawer_text = total_price
+    drawer_text_width = drawer_font.getsize(drawer_text)[0]
+    drawer_position = (ceil(const.LAYOUT_WIDTH * 0.731), ceil(const.LAYOUT_HEIGHT * 0.95))
+    layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font, ((drawer_size[0] - drawer_text_width) // 2, 0)), drawer_position)
+    # Weight
+    drawer_font = const.TEXT['WEIGHT']
+    drawer_text = total_weight
+    drawer_text_width = drawer_font.getsize(drawer_text)[0]
+    drawer_size = (490, 80)
+    drawer_position = (ceil(const.LAYOUT_WIDTH * 0.549), ceil(const.LAYOUT_HEIGHT * 0.95))
+    layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font, ((drawer_size[0] - drawer_text_width) // 2, 0)), drawer_position)
+    # Amount
+    drawer_text = total_amount
+    drawer_text_width = drawer_font.getsize(drawer_text)[0]
+    drawer_position = (ceil(const.LAYOUT_WIDTH * 0.368), ceil(const.LAYOUT_HEIGHT * 0.95))
+    layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font, ((drawer_size[0] - drawer_text_width) // 2, 0)), drawer_position)
 
     row = col = 0
     while not is_ended and col < const.HORIZONTAL_AMOUNT:
@@ -52,6 +70,7 @@ def main():
         weight = txt.get('weight', None)
         if weight is not None and weight not in name:
           name += f' ({weight}г)'
+          print(" WARNING. The weight of the candy is not set.")
 
         try:
           layout.paste(img, (x_offset_centred, y_offset_centred), mask=img.split()[3])
@@ -88,7 +107,7 @@ def main():
         pasted_counter += 1
         row += 1
 
-        if pasted_counter >= ll:
+        if pasted_counter >= total_amount:
           is_ended = True
 
       x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
@@ -98,10 +117,10 @@ def main():
 
     layout.convert('RGB').save(f"result/{layout_name}-{layout_number}.jpg")
     layout.close()
-    print(f"Файл '{layout_name}-{layout_number}.jpg' сохранен в папке 'result'")
+    print(f" Файл '{layout_name}-{layout_number}.jpg' сохранен в папке 'result'")
     layout_number += 1
   bg.close()
 
 if __name__ == '__main__':
   main()
-  input("\nПрограмма закончила работу\nНажмите 'Enter' чтобы закрыть программу")
+  input("\n Программа закончила работу\n Нажмите 'Enter' чтобы закрыть программу")

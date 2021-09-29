@@ -1,6 +1,7 @@
 from os import listdir
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from regexp import compile, strip_format, format
+
 
 def resize_img(image: Image, width: int, height: int, resolution: float):
   img_w, img_h = image.size
@@ -45,15 +46,15 @@ def get_full_filename(name: list, path: str):
   if idx == -1:
     idx = find(compiled_folder_items, compile(name[1]))
   if idx == -1:
-    print(f'Не найдено совпадений для {name}\n')
+    print(f' Не найдено совпадений для {name}\n')
     return None
-  print(f'Найдено совпадение {folder_items[idx]}\n')
+  print(f' Найдено совпадение {folder_items[idx]}\n')
   return folder_items[idx]
 
 
 def get_filenames(path: str, db: dict):
   image_files = []
-  print("Введите список конфет. Чтобы закончить введите '0'")
+  print(" Введите список конфет. Чтобы закончить введите '0'")
   counter = 1
   while True:
     inp = input(f'{counter}: ')
@@ -85,7 +86,7 @@ def load_image(source: str, amount: int, key: str, path: str):
 
 
 def get_images(name_amount_keyDB: list, path: str):
-  print('\nЗагружаю изображения\n')
+  print('\n Загружаю изображения\n')
   return [load_image(src, amount, key, path) for src, amount, key in name_amount_keyDB]
 
 
@@ -101,7 +102,7 @@ def db_filename(name: str, db: dict):
       # if name in value['name'] or value['name'] in name or name in value['image'] or value['image'] in name:
       if compile(name) == compile(value['name']) or compile(name) == compile(value['image']):
         return value['name'], value['image'], key
-    print(f'{name} не найдено в базе')
+    print(f' {name} не найдено в базе')
     return None
   return item['name'], item['image'], db_key
 
@@ -131,3 +132,10 @@ def to_multiline(line, font, width, lines=1000):
 
   line = ''.join(map(lambda el: el if '\n' in el else f'{el} ', words))
   return line, shift
+
+
+def text_drawer(text: str, size: tuple, font: ImageFont, position: tuple=(0,0), fill: tuple=(3, 3, 3)):
+  image = Image.new('RGB', size, (255, 255, 255))
+  drawer = ImageDraw.Draw(image)
+  drawer.text(position, text, font=font, fill=(3, 3, 3))
+  return image
