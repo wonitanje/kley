@@ -57,7 +57,7 @@ def get_filenames(path: str, db: dict):
   print(" Введите список конфет. Чтобы закончить введите '0'")
   counter = 1
   while True:
-    inp = input(f'{counter}: ')
+    inp = input(f' {counter}: ')
     counter += 1
     if inp == '0': break
     filename = db_filename(inp, db)
@@ -137,5 +137,5 @@ def to_multiline(line, font, width, lines=1000):
 def text_drawer(text: str, size: tuple, font: ImageFont, position: tuple=(0,0), fill: tuple=(3, 3, 3)):
   image = Image.new('RGB', size, (255, 255, 255))
   drawer = ImageDraw.Draw(image)
-  drawer.text(position, text, font=font, fill=(3, 3, 3))
+  drawer.text(position, text, font=font, fill=fill)
   return image

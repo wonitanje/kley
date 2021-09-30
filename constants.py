@@ -1,16 +1,7 @@
 from configparser import ConfigParser
 from PIL import ImageFont
-from os import listdir
-import json
 import default_constants as default
-
-for file in listdir('assets'):
-  if 'db.json' in file:
-    db_filename = file
-    break
-
-with open(f'assets/{db_filename}', 'r', encoding='utf-8') as json_file:
-  DB = json.load(json_file)
+from db import DB
 
 config = ConfigParser()
 config.read('config.ini')
@@ -30,6 +21,8 @@ if exists:
   TEXT['ENUM'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('ENUM', default.ENUM_SIZE)))
   TEXT['NAME'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('NAME', default.NAME_SIZE)))
   TEXT['DESC'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('DESC', default.DESC_SIZE)))
+  TEXT['NUMB'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('NUMERATOR', default.NUMERATOR_SIZE)))
+  TEXT['INFO'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('INFO', default.INFO_SIZE)))
   TEXT_MARGIN = int(config['TEXT'].get('MARGIN', default.TEXT_MARGIN))
   NAME_LINES = int(config['TEXT'].get('NAME_MAX_LINES', default.NAME_LINES))
 else:
@@ -37,12 +30,12 @@ else:
     'SIRE': ImageFont.truetype(PRIMARY_FONT, default.SIRE_SIZE),
     'ENUM': ImageFont.truetype(PRIMARY_FONT, default.ENUM_SIZE),
     'NAME': ImageFont.truetype(PRIMARY_FONT, default.NAME_SIZE),
-    'DESC': ImageFont.truetype(PRIMARY_FONT, default.DESC_SIZE)
+    'DESC': ImageFont.truetype(PRIMARY_FONT, default.DESC_SIZE),
+    'NUMB': ImageFont.truetype(SECOND_FONT, default.NUMERATOR_SIZE),
+    'INFO': ImageFont.truetype(SECOND_FONT, default.INFO_SIZE)
   }
   TEXT_MARGIN = default.TEXT_MARGIN
   NAME_LINES = default.NAME_LINES
-TEXT['NUMERATOR'] = ImageFont.truetype(SECOND_FONT, default.NUMERATOR_SIZE)
-TEXT['WEIGHT'] = ImageFont.truetype(SECOND_FONT, default.WEIGHT_SIZE)
 
 try:
   FOLDER_PATH = config['FOLDER'].get('PATH', default.FOLDER_PATH)

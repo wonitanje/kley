@@ -10,7 +10,7 @@ config['LAYOUT']['PADDING_H'] = '230'
 config['LAYOUT']['BACKGROUND'] = 'assets/bg.png'
 
 config['FOLDER'] = {}
-config['FOLDER']['PATH'] = '../'
+config['FOLDER']['PATH'] = 'images/cropped'
 
 config['BLOCK'] = {}
 config['BLOCK']['MARGIN'] = '16'
@@ -27,11 +27,13 @@ config['TEXT']['SIRE'] = '25'
 config['TEXT']['ENUM'] = '25'
 config['TEXT']['NAME'] = '30'
 config['TEXT']['DESC'] = '23'
+config['TEXT']['NUMERATOR'] = '50'
+config['TEXT']['INFO'] = '60'
 config['TEXT']['NAME_MAX_LINES'] = '4'
 
 config['FONT'] = {}
 config['FONT']['MAIN'] = 'arial.ttf'
-config['FONT']['ADD'] = 'assets/Lobster.ttf'
+config['FONT']['ADD'] = 'assets/OpenSans.ttf'
 
 
 with open('config.ini', 'w') as configfile:

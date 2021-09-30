@@ -20,7 +20,7 @@ ENUM_SIZE = 25
 NAME_SIZE = 30
 DESC_SIZE = 23
 NUMERATOR_SIZE = 50
-WEIGHT_SIZE = 80
+INFO_SIZE = 60
 
 PRIMARY_FONT = 'arial.ttf'
-SECOND_FONT = 'assets/Lobster.ttf'
+SECOND_FONT = 'assets/OpenSans.ttf'

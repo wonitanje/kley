@@ -1,6 +1,7 @@
 from os import rename
 import json
 from regexp import compile
+from db import DB
 
 def modify_item(key: str):
   item = DB[key].copy()
@@ -47,9 +48,6 @@ def add_item(key: str, img: str):
   print(' Добавлена конфета', DB[key])
 
 if __name__ == '__main__':
-  with open('db.json', 'r', encoding='utf-8') as json_file:
-      DB = json.load(json_file)
-
   while True:
     print("\n[?] Введите '0' чтобы закончить")
     img = input('- Введите название изображения: ')
@@ -61,6 +59,18 @@ if __name__ == '__main__':
     else:
       add_item(key, img)
 
-  rename('db.json', 'db_old.json')
-  with open('db.json', 'w', encoding='utf-8') as json_file:
+  db_busy = True
+  while db_busy:
+    try:
+      rename('DB.json', 'DB_old.json')
+      db_busy = False
+    except:
+      print(' Что-то пошло не так. Скорее всего база занята другой программой')
+      print(' Попробовать снова?')
+      print(' [1] Да (по умолчанию)')
+      print(' [2] Нет, отменить изменения')
+      if input('- Ввод: ') == '2':
+        raise Exception
+
+  with open('DB.json', 'w', encoding='utf-8') as json_file:
     json.dump(DB, json_file, ensure_ascii=False)
