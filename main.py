@@ -3,6 +3,7 @@ from os import makedirs
 from os.path import exists
 from PIL import Image, ImageDraw
 from math import ceil
+from functools import reduce
 import constants as const
 import utils
 
@@ -10,11 +11,13 @@ def main():
   file_names = utils.get_filenames(const.FOLDER_PATH, const.DB)
   pillow_images = utils.get_images(file_names, const.FOLDER_PATH)
   images = utils.resize_images(pillow_images, const.IMAGE_WIDTH, const.BLOCK_HEIGHT, const.IMAGE_RESOLUTION)
-  total_amount = len(images)
+  ll = len(images)
+  total_amount = reduce(lambda s, img: s + img.amount, images, 0)
   print(f' Всего изображений: {total_amount}\n Количество строк: {const.VERTICAL_AMOUNT}\n Количество столбцев: {const.HORIZONTAL_AMOUNT}')
   total_weight = input('- Введите вес подарка: ')
   total_price = input('- Введите цену подарка: ')
   layout_name = input('- Введите название сгенерированной картинки: ') or 'test'
+  print(images)
   if not exists('result'):
     makedirs('result')
 
@@ -64,6 +67,7 @@ def main():
     row = col = 0
     while not is_ended and col < const.HORIZONTAL_AMOUNT:
       while not is_ended and row < const.VERTICAL_AMOUNT:
+        print(f'{pasted_counter=}')
         img = images[pasted_counter]
         x_offset_centred = x_offset + (const.IMAGE_WIDTH - img.size[0]) // 2
         y_offset_centred = y_offset + (const.BLOCK_HEIGHT - img.size[1]) // 2
@@ -110,7 +114,7 @@ def main():
         pasted_counter += 1
         row += 1
 
-        if pasted_counter >= total_amount:
+        if pasted_counter >= ll:
           is_ended = True
 
       x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
