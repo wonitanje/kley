@@ -5,7 +5,8 @@ config = ConfigParser()
 config['LAYOUT'] = {}
 config['LAYOUT']['WIDTH'] = '3508'
 config['LAYOUT']['HEIGHT'] = '2480'
-config['LAYOUT']['PADDING_V'] = '170'
+config['LAYOUT']['PADDING_TOP'] = '220'
+config['LAYOUT']['PADDING_BOT'] = '120'
 config['LAYOUT']['PADDING_H'] = '230'
 config['LAYOUT']['BACKGROUND'] = 'assets/bg.png'
 
