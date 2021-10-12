@@ -9,20 +9,22 @@ import utils
 
 def main():
   file_names = utils.get_filenames(const.FOLDER_PATH, const.DB)
+  if len(file_names) == 0:
+    print('Нет ниодного изображения. Выход...')
+    return
   pillow_images = utils.get_images(file_names, const.FOLDER_PATH)
   images = utils.resize_images(pillow_images, const.IMAGE_WIDTH, const.BLOCK_HEIGHT, const.IMAGE_RESOLUTION)
   ll = len(images)
   total_amount = reduce(lambda s, img: s + img.amount, images, 0)
-  print(f' Всего изображений: {total_amount}\n Количество строк: {const.VERTICAL_AMOUNT}\n Количество столбцев: {const.HORIZONTAL_AMOUNT}')
+  print(f' Всего изображений: {ll}\n Количество строк: {const.VERTICAL_AMOUNT}\n Количество столбцев: {const.HORIZONTAL_AMOUNT}')
   total_weight = input('- Введите вес подарка: ')
   total_price = input('- Введите цену подарка: ')
   layout_name = input('- Введите название сгенерированной картинки: ') or 'test'
-  print(images)
   if not exists('result'):
     makedirs('result')
 
   layout_number = 1
-  layouts_amount = ceil(total_amount / (const.HORIZONTAL_AMOUNT * const.VERTICAL_AMOUNT))
+  layouts_amount = ceil(ll / (const.HORIZONTAL_AMOUNT * const.VERTICAL_AMOUNT))
   pasted_counter = 0
   is_ended = False
   try:
@@ -67,7 +69,6 @@ def main():
     row = col = 0
     while not is_ended and col < const.HORIZONTAL_AMOUNT:
       while not is_ended and row < const.VERTICAL_AMOUNT:
-        print(f'{pasted_counter=}')
         img = images[pasted_counter]
         x_offset_centred = x_offset + (const.IMAGE_WIDTH - img.size[0]) // 2
         y_offset_centred = y_offset + (const.BLOCK_HEIGHT - img.size[1]) // 2
