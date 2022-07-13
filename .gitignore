@@ -1,5 +1,6 @@
 __pychache__
 .vscode
+.DS_Store
 
 dist
 venv
@@ -10,9 +11,6 @@ txt
 
 *.ini
 *.zip
-# *.png
-# *.jpg
-# *.jpeg
 *.spec
 *.cpython*
 

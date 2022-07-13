@@ -8,7 +8,7 @@ config['LAYOUT']['HEIGHT'] = '1585'
 config['LAYOUT']['PADDING_HOR'] = '55'
 config['LAYOUT']['PADDING_TOP'] = '200'
 config['LAYOUT']['PADDING_BOT'] = '40'
-config['LAYOUT']['BACKGROUND'] = 'assets/bg-novogodniy-standart.png'
+config['LAYOUT']['BACKGROUND'] = 'assets/bg.png'
 
 config['FOLDER'] = {}
 config['FOLDER']['PATH'] = 'images/cropped'
