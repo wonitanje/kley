@@ -9,12 +9,12 @@
 
 ## Usage with python
 ```bash
-pip install -r requirements.txt
-python main.py
+pip3 install -r requirements.txt
+python3 main.py
 ```
 
 ## Usage with executable file
 ```bash
-pip install pyinstaller
+pip3 install pyinstaller
 pyinstaller main.py --onefile
 ```

@@ -134,8 +134,33 @@ def to_multiline(line, font, width, lines=1000):
   return line, shift
 
 
-def text_drawer(text: str, size: tuple, font: ImageFont, position: tuple=(0,0), fill: tuple=(3, 3, 3)):
-  image = Image.new('RGB', size, (255, 255, 255))
+def text_drawer(text: str, size: tuple, font: ImageFont, position: tuple=(0,0), fill: tuple=(3, 3, 3), background: tuple=(255, 255, 255)):
+  image = Image.new('RGB', size, background)
   drawer = ImageDraw.Draw(image)
   drawer.text(position, text, font=font, fill=fill)
   return image
+
+
+def get_weight_word(weight: int):
+  last_num = weight % 10
+  if weight <= 1: return 'грамм'
+  if weight >= 2 and weight <= 4: return 'грамма'
+  if weight >= 5 and weight <= 20: return 'грамм'
+
+  last_num = weight % 10
+  if last_num >= 2 and last_num <= 4: return  'грамма'
+  return 'грамм'
+
+def get_amount_word(amount: int):
+  if amount <= 1: return 'конфет'
+  if amount >= 2 and amount <= 4: return 'конфеты'
+  if amount >= 5 and amount <= 20: return 'конфет'
+
+  last_num = amount % 10
+  if last_num == 1: return 'конфета'
+  if last_num >= 2 and last_num <= 4: return  'конфеты'
+  return 'конфет'
+
+
+def get_avaible_backgrounds():
+  return [filename for filename in listdir('assets/backgrounds') if '.png' in filename]

@@ -6,36 +6,28 @@ from db import DB
 config = ConfigParser()
 config.read('config.ini')
 
-try:
-  PRIMARY_FONT = config['FONT'].get('MAIN', default.PRIMARY_FONT)
-  SECOND_FONT = config['FONT'].get('ADD', default.PRIMARY_FONT)
-except:
-  PRIMARY_FONT = default.PRIMARY_FONT
-  SECOND_FONT = default.SECOND_FONT
+try: exists = config['FONT']
+except: exists = False
+if exists:
+  FONT_MAIN = config['FONT'].get('MAIN', default.FONT_MAIN)
+  FONT_SECOND = config['FONT'].get('SECOND', default.FONT_SECOND)
+else:
+  FONT_MAIN = default.FONT_MAIN
+  FONT_SECOND = default.FONT_SECOND
 
 try: exists = config['TEXT']
 except: exists = False
 if exists:
   TEXT = {}
-  TEXT['SIRE'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('SIRE', default.SIRE_SIZE)))
-  TEXT['ENUM'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('ENUM', default.ENUM_SIZE)))
-  TEXT['NAME'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('NAME', default.NAME_SIZE)))
-  TEXT['DESC'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('DESC', default.DESC_SIZE)))
-  TEXT['NUMB'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('NUMERATOR', default.NUMERATOR_SIZE)))
-  TEXT['INFO'] = ImageFont.truetype(PRIMARY_FONT, int(config['TEXT'].get('INFO', default.INFO_SIZE)))
-  TEXT_MARGIN = int(config['TEXT'].get('MARGIN', default.TEXT_MARGIN))
-  NAME_LINES = int(config['TEXT'].get('NAME_MAX_LINES', default.NAME_LINES))
+  TEXT['TITLE'] = ImageFont.truetype(FONT_SECOND, int(config['TEXT'].get('TITLE', default.TITLE_SIZE)))
+  TEXT['NUMB'] = ImageFont.truetype(FONT_MAIN, int(config['TEXT'].get('NUMERATOR', default.NUMERATOR_SIZE)))
+  TEXT['INFO'] = ImageFont.truetype(FONT_MAIN, int(config['TEXT'].get('INFO', default.INFO_SIZE)))
 else:
   TEXT = {
-    'SIRE': ImageFont.truetype(PRIMARY_FONT, default.SIRE_SIZE),
-    'ENUM': ImageFont.truetype(PRIMARY_FONT, default.ENUM_SIZE),
-    'NAME': ImageFont.truetype(PRIMARY_FONT, default.NAME_SIZE),
-    'DESC': ImageFont.truetype(PRIMARY_FONT, default.DESC_SIZE),
-    'NUMB': ImageFont.truetype(SECOND_FONT, default.NUMERATOR_SIZE),
-    'INFO': ImageFont.truetype(SECOND_FONT, default.INFO_SIZE)
+    'TITLE': ImageFont.truetype(FONT_MAIN, default.TITLE_SIZE),
+    'NUMB': ImageFont.truetype(FONT_MAIN, default.NUMERATOR_SIZE),
+    'INFO': ImageFont.truetype(FONT_MAIN, default.INFO_SIZE)
   }
-  TEXT_MARGIN = default.TEXT_MARGIN
-  NAME_LINES = default.NAME_LINES
 
 try:
   FOLDER_PATH = config['FOLDER'].get('PATH', default.FOLDER_PATH)
@@ -50,16 +42,15 @@ if exists:
   LAYOUT_HEIGHT = int(config['LAYOUT'].get('HEIGHT', default.LAYOUT_HEIGHT))
   LAYOUT_PADDING_TOP = int(config['LAYOUT'].get('PADDING_TOP', default.LAYOUT_PADDING_TOP))
   LAYOUT_PADDING_BOT = int(config['LAYOUT'].get('PADDING_BOT', default.LAYOUT_PADDING_BOT))
-  LAYOUT_PADDING_H = int(config['LAYOUT'].get('PADDING_H', default.LAYOUT_PADDING_H))
-  LAYOUT_BACKGROUND = config['LAYOUT'].get('LAYOUT_BACKGROUND', default.LAYOUT_BACKGROUND)
+  LAYOUT_PADDING_HOR = int(config['LAYOUT'].get('PADDING_HOR', default.LAYOUT_PADDING_HOR))
+  LAYOUT_BACKGROUND = config['LAYOUT'].get('BACKGROUND', default.LAYOUT_BACKGROUND)
 else:
   LAYOUT_WIDTH = default.LAYOUT_WIDTH
   LAYOUT_HEIGHT = default.LAYOUT_HEIGHT
-  LAYOUT_PADDING_H = default.LAYOUT_PADDING_H
+  LAYOUT_PADDING_HOR = default.LAYOUT_PADDING_HOR
   LAYOUT_PADDING_TOP = default.LAYOUT_PADDING_TOP
   LAYOUT_PADDING_BOT = default.LAYOUT_PADDING_BOT
   LAYOUT_BACKGROUND = default.LAYOUT_BACKGROUND
-
 
 try: exists = config['BLOCK']
 except: exists = False
@@ -73,23 +64,12 @@ else:
   BLOCK_WIDTH = default.BLOCK_WIDTH
 
 
-try: exists = config['IMAGE_TEXT']
-except: exists = False
-if exists:
-  IMAGE_TEXT_MARGIN = int(config['IMAGE_TEXT'].get('MARGIN', default.IMAGE_TEXT_MARGIN))
-  IMAGE_TEXT_RESOLUTION = list(map(int, config['IMAGE_TEXT'].get('RESOLUTION', default.IMAGE_TEXT_RESOLUTION).split(':')))
-else:
-  IMAGE_TEXT_MARGIN = default.IMAGE_TEXT_MARGIN
-  IMAGE_TEXT_RESOLUTION = default.IMAGE_TEXT_RESOLUTION
+IMAGE_WIDTH = int(BLOCK_WIDTH)
+TEXT_WIDTH = int(BLOCK_WIDTH)
 
-
-IMAGE_TEXT_RESOLUTION.append(IMAGE_TEXT_RESOLUTION[0] + IMAGE_TEXT_RESOLUTION[1])
-IMAGE_WIDTH = int(BLOCK_WIDTH / IMAGE_TEXT_RESOLUTION[2] * IMAGE_TEXT_RESOLUTION[0] - IMAGE_TEXT_MARGIN // 2)
-TEXT_WIDTH = int(BLOCK_WIDTH / IMAGE_TEXT_RESOLUTION[2] * IMAGE_TEXT_RESOLUTION[1] - IMAGE_TEXT_MARGIN // 2)
-
-HORIZONTAL_AMOUNT = (LAYOUT_WIDTH - LAYOUT_PADDING_H * 2) // BLOCK_WIDTH
+HORIZONTAL_AMOUNT = (LAYOUT_WIDTH - LAYOUT_PADDING_HOR * 2) // BLOCK_WIDTH
 VERTICAL_AMOUNT = (LAYOUT_HEIGHT - LAYOUT_PADDING_TOP - LAYOUT_PADDING_BOT) // BLOCK_HEIGHT
 IMAGE_RESOLUTION = IMAGE_WIDTH / BLOCK_HEIGHT
-LAYOUT_PADDING_HORIZONTAL = LAYOUT_PADDING_H + ((LAYOUT_WIDTH - LAYOUT_PADDING_H * 2) - BLOCK_WIDTH*HORIZONTAL_AMOUNT - HORIZONTAL_AMOUNT*BLOCK_MARGIN) // 2
+LAYOUT_PADDING_HORIZONTAL = LAYOUT_PADDING_HOR #+ ((LAYOUT_WIDTH - LAYOUT_PADDING_HOR * 2) - BLOCK_WIDTH*HORIZONTAL_AMOUNT - HORIZONTAL_AMOUNT*BLOCK_MARGIN) // 2
 LAYOUT_PADDING_TOP = LAYOUT_PADDING_TOP + ((LAYOUT_HEIGHT - LAYOUT_PADDING_TOP - LAYOUT_PADDING_BOT) - BLOCK_HEIGHT*VERTICAL_AMOUNT - VERTICAL_AMOUNT*BLOCK_MARGIN) // 2
 LAYOUT_PADDING_BOT = LAYOUT_PADDING_BOT + ((LAYOUT_HEIGHT - LAYOUT_PADDING_TOP - LAYOUT_PADDING_BOT) - BLOCK_HEIGHT*VERTICAL_AMOUNT - VERTICAL_AMOUNT*BLOCK_MARGIN) // 2

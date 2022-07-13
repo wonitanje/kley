@@ -92,7 +92,7 @@ if __name__ == '__main__':
     cropped_size = (img_box[2] - img_box[0], img_box[3] - img_box[1])
 
     cropped = Image.new('RGBA', cropped_size, (255, 255, 255))
-    print(f' Перевожу\nИз: {img.size}\nВ: {cropped.size}\n Координаты обрезки: {img_box}\n\n')
+    print(f' Перевожу\n   Из: {img.size}\n   В: {cropped.size}\n Координаты обрезки: {img_box}\n\n')
 
     img_pos = tuple(map(lambda x: -x, img_box[:2]))
     cropped.paste(img, img_pos, img)
