@@ -84,14 +84,32 @@ def main():
   layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font_str, drawer_text_pos, drawer_fill), drawer_position)
 
   is_ended = False
-  row = col = 0
-  x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
-  y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
-  while not is_ended and row < const.VERTICAL_AMOUNT:
-    while not is_ended and col < const.HORIZONTAL_AMOUNT:
+
+  line = [0, 0]
+
+  x_offset_d = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
+  y_offset_d = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
+  offset_d = [x_offset_d, y_offset_d]
+
+  x_shift = const.BLOCK_WIDTH + const.BLOCK_MARGIN
+  y_shift = const.BLOCK_HEIGHT + const.BLOCK_MARGIN
+  shift = [x_shift, y_shift]
+  
+  x_amount = const.HORIZONTAL_AMOUNT
+  y_amount = const.VERTICAL_AMOUNT
+  amount = [x_amount, y_amount]
+
+  x_offset = x_offset_d
+  y_offset = y_offset_d
+  offset = [x_offset, y_offset]
+
+  primary = const.DIRECTION
+  secondary = (const.DIRECTION + 1) % 2
+  
+  while not is_ended and line[secondary] < amount[secondary]:
+    while not is_ended and line[primary] < amount[primary]:
       img = images[pasted_counter]
-      x_offset_centred = x_offset + (const.IMAGE_WIDTH - img.size[0]) // 2
-      y_offset_centred = y_offset + (const.BLOCK_HEIGHT - img.size[1]) // 2
+      offset_centred = (offset[0] + (const.IMAGE_WIDTH - img.size[0]) // 2, offset[1] + (const.BLOCK_HEIGHT - img.size[1]) // 2)
       txt = utils.db_name(img.key, const.DB)
       sire = txt['sire']
       name = txt['name'].replace('гр)', 'г)').replace(' г)', 'г)')
@@ -101,25 +119,22 @@ def main():
         name += f' ({weight}г)'
 
       try:
-        layout.paste(img, (x_offset_centred, y_offset_centred), mask=img.split()[3])
+        layout.paste(img, offset_centred, mask=img.split()[3])
       except:
-        layout.paste(img, (x_offset_centred, y_offset_centred))
+        layout.paste(img, offset_centred)
       img.close()
 
-      x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
+      offset[primary] += shift[primary]
+      line[primary] += 1
       pasted_counter += 1
-      col += 1
 
       if pasted_counter >= ll:
         is_ended = True
 
-    # x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
-    # y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
-
-    y_offset += const.BLOCK_HEIGHT + const.BLOCK_MARGIN
-    x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
-    row += 1
-    col = 0
+    offset[primary] = offset_d[primary]
+    offset[secondary] += shift[secondary]
+    line[primary] = 0
+    line[secondary] += 1
 
   if input("- Введите '1' чтобы посмотреть результат: ").strip() == '1':
     layout.show()

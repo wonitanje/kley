@@ -9,6 +9,7 @@ config['LAYOUT']['PADDING_HOR'] = '55'
 config['LAYOUT']['PADDING_TOP'] = '200'
 config['LAYOUT']['PADDING_BOT'] = '40'
 config['LAYOUT']['BACKGROUND'] = 'assets/bg.png'
+config['LAYOUT']['DIRECTION'] = 'vertical'
 
 config['FOLDER'] = {}
 config['FOLDER']['PATH'] = 'images/cropped'
