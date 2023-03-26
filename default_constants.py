@@ -23,5 +23,5 @@ DESC_SIZE = 23
 NUMERATOR_SIZE = 50
 INFO_SIZE = 60
 
-PRIMARY_FONT = 'arial.ttf'
+PRIMARY_FONT = 'assets/arial.ttf'
 SECOND_FONT = 'assets/OpenSans.ttf'

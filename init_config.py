@@ -33,7 +33,7 @@ config['TEXT']['INFO'] = '60'
 config['TEXT']['NAME_MAX_LINES'] = '4'
 
 config['FONT'] = {}
-config['FONT']['MAIN'] = 'arial.ttf'
+config['FONT']['MAIN'] = 'assets/arial.ttf'
 config['FONT']['ADD'] = 'assets/OpenSans.ttf'
 
 
