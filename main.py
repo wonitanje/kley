@@ -1,134 +1,60 @@
-from genericpath import exists
-from os import makedirs
-from os.path import exists
-from PIL import Image, ImageDraw
-from math import ceil
-from functools import reduce
-import constants as const
-import utils
+from uuid import uuid4
+from fastapi import FastAPI, Form, File, UploadFile
+from fastapi.responses import FileResponse
+from collections import Counter
 
-def main():
-  file_names = utils.get_filenames(const.FOLDER_PATH, const.DB)
-  if len(file_names) == 0:
-    print('Нет ниодного изображения. Выход...')
-    return
-  pillow_images = utils.get_images(file_names, const.FOLDER_PATH)
-  images = utils.resize_images(pillow_images, const.IMAGE_WIDTH, const.BLOCK_HEIGHT, const.IMAGE_RESOLUTION)
-  ll = len(images)
-  total_amount = reduce(lambda s, img: s + img.amount, images, 0)
-  print(f' Всего изображений: {ll}\n Количество строк: {const.VERTICAL_AMOUNT}\n Количество столбцев: {const.HORIZONTAL_AMOUNT}')
-  total_weight = input('- Введите вес подарка: ')
-  total_price = input('- Введите цену подарка: ')
-  layout_name = input('- Введите название сгенерированной картинки: ') or 'test'
-  if not exists('result'):
-    makedirs('result')
+from models.offer import ChangeOfferModel, OfferModel
+from utils.doc import Doc
+from utils.layout import Layout
+from utils.sweet import Sweet
 
-  layout_number = 1
-  layouts_amount = ceil(ll / (const.HORIZONTAL_AMOUNT * const.VERTICAL_AMOUNT))
-  pasted_counter = 0
-  is_ended = False
-  try:
-    bg = Image.open(const.LAYOUT_BACKGROUND).resize((const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT))
-  except:
-    print(f' Не удалось загрузить фон {const.LAYOUT_BACKGROUND}')
+app = FastAPI()
 
-  while not is_ended:
-    x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
-    y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
-    layout = Image.new('RGB', [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255))
-    layout.paste(bg, (0, 0))
-    # Layout number / layouts amount
-    drawer_font = const.TEXT['NUMB']
-    drawer_text = f'{layout_number} / {layouts_amount}'
-    drawer_text_width = drawer_font.getsize(drawer_text)[0]
-    drawer_size = (150, 60)
-    drawer_position = (ceil(const.LAYOUT_WIDTH * 0.923), ceil(const.LAYOUT_HEIGHT * 0.95))
-    layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font, ((drawer_size[0] - drawer_text_width) // 2, 0)), drawer_position)
-    # Price
-    drawer_fill = (255, 25, 31)
-    drawer_size = (400, 80)
-    drawer_font = const.TEXT['INFO']
-    drawer_text = total_price
-    drawer_text_size = drawer_font.getsize(drawer_text)
-    drawer_text_pos = ((drawer_size[0] - drawer_text_size[0]) // 2, (drawer_size[1] - drawer_text_size[1]) // 2)
-    drawer_position = (ceil(const.LAYOUT_WIDTH * 0.8), ceil(const.LAYOUT_HEIGHT * 0.07))
-    layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font, drawer_text_pos, drawer_fill), drawer_position)
-    # Weight
-    drawer_text = total_weight
-    drawer_text_size = drawer_font.getsize(drawer_text)
-    drawer_text_pos = ((drawer_size[0] - drawer_text_size[0]) // 2, (drawer_size[1] - drawer_text_size[1]) // 2)
-    drawer_position = (ceil(const.LAYOUT_WIDTH * 0.6357), ceil(const.LAYOUT_HEIGHT * 0.07))
-    layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font, drawer_text_pos, drawer_fill), drawer_position)
-    # Amount
-    drawer_text = f'{total_amount} штук'
-    drawer_text_size = drawer_font.getsize(drawer_text)
-    drawer_text_pos = ((drawer_size[0] - drawer_text_size[0]) // 2, (drawer_size[1] - drawer_text_size[1]) // 2)
-    drawer_position = (ceil(const.LAYOUT_WIDTH * 0.4775), ceil(const.LAYOUT_HEIGHT * 0.07))
-    layout.paste(utils.text_drawer(drawer_text, drawer_size, drawer_font, drawer_text_pos, drawer_fill), drawer_position)
 
-    row = col = 0
-    while not is_ended and col < const.HORIZONTAL_AMOUNT:
-      while not is_ended and row < const.VERTICAL_AMOUNT:
-        img = images[pasted_counter]
-        x_offset_centred = x_offset + (const.IMAGE_WIDTH - img.size[0]) // 2
-        y_offset_centred = y_offset + (const.BLOCK_HEIGHT - img.size[1]) // 2
-        txt = utils.db_name(img.key, const.DB)
-        sire = txt['sire']
-        name = txt['name'].replace('гр)', 'г)').replace(' г)', 'г)')
-        desc = txt.get('description', None)
-        weight = txt.get('weight', None)
-        if weight is not None and weight not in name:
-          name += f' ({weight}г)'
+@app.get("/")
+def read_root():
+    return "Server is stable"
 
-        try:
-          layout.paste(img, (x_offset_centred, y_offset_centred), mask=img.split()[3])
-        except:
-          layout.paste(img, (x_offset_centred, y_offset_centred))
-        img.close()
 
-        text = Image.new('RGBA', [const.TEXT_WIDTH, const.BLOCK_HEIGHT], (255, 255, 255))
-        drawer = ImageDraw.Draw(text)
+@app.post("/offer")
+def create_offer(offer: OfferModel):
+    doc = Doc()
 
-        text_x = text_y = 0
-        drawer.text((text_x, text_y), sire, font=const.TEXT['SIRE'], fill=(120, 120, 120))
+    def add_page():
+        doc.add_page(Layout(offer.background))
 
-        text_x = const.TEXT['SIRE'].getsize(sire)[0] + 10
-        drawer.text((text_x, text_y), f'{img.amount} шт', font=const.TEXT['ENUM'], fill=(18,183,45))
+    def add_sweet(sweet: Sweet):
+        print("add_sweet", sweet.name, doc.page)
+        return doc.page and doc.page.add_sweet(sweet)
 
-        text_x = 0
-        text_y += const.TEXT['ENUM'].getsize(sire)[1] + const.TEXT_MARGIN
-        name, shift = utils.to_multiline(name, const.TEXT['NAME'], const.TEXT_WIDTH, const.NAME_LINES)
-        drawer.multiline_text((text_x, text_y), name, font=const.TEXT['NAME'], fill=(3, 3, 3))
+    for name, amount in Counter(offer.sweets).items():
+        sweet = Sweet(name, amount)
+        if not add_sweet(sweet):
+            add_page()
+            add_sweet(sweet)
+        sweet.picture.dispose()
 
-        if desc is not None:
-          text_y += shift + const.TEXT_MARGIN
-          desc, shift = utils.to_multiline(desc, const.TEXT['DESC'], const.TEXT_WIDTH)
-          drawer.multiline_text((text_x, text_y), desc, font=const.TEXT['DESC'], fill=(3, 3, 3))
-          text_height = text_y + shift
+    pagesAmount = len(doc.pages)
+    sweetsAmount = len(offer.sweets)
+    for idx, page in enumerate(doc.pages):
+        page.draw_weight(offer.weight)
+        page.draw_price(offer.price)
+        page.draw_amount(sweetsAmount)
+        page.draw_numerator(idx + 1, pagesAmount)
 
-        text_x = x_offset + const.IMAGE_WIDTH + const.IMAGE_TEXT_MARGIN
-        text_y = y_offset + (const.BLOCK_HEIGHT - text_height) // 2
-        layout.paste(text, (text_x, text_y))
-        text.close()
+    return [FileResponse(path) for path in doc.save(uuid4())]
 
-        y_offset += const.BLOCK_HEIGHT + const.BLOCK_MARGIN
-        pasted_counter += 1
-        row += 1
 
-        if pasted_counter >= ll:
-          is_ended = True
+@app.patch("/offer")
+def modify_offer(changes: ChangeOfferModel):
+    doc = Doc(changes.file)
+    for page in doc.pages:
+        if changes.price:
+            page.draw_price(changes.price)
 
-      x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
-      y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
-      col += 1
-      row = 0
+    return [FileResponse(path) for path in doc.save(uuid4())]
 
-    layout.convert('RGB').save(f"result/{layout_name}-{layout_number}.jpg")
-    layout.close()
-    print(f" Файл '{layout_name}-{layout_number}.jpg' сохранен в папке 'result'")
-    layout_number += 1
-  bg.close()
 
-if __name__ == '__main__':
-  main()
-  input("\n Программа закончила работу\n Нажмите 'Enter' чтобы закрыть программу")
+@app.post("/")
+def test(files: list[UploadFile] = File(), price: str = Form()):
+    return {"price": price, "files": [file.filename for file in files]}
