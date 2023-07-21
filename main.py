@@ -43,5 +43,4 @@ def create_offer(offer: OfferModel):
         page.draw_numerator(idx + 1, pagesAmount)
 
     paths = doc.save(uuid4())
-    print(paths)
     return [FileResponse(path) for path in paths]

@@ -109,7 +109,6 @@ class Layout:
         self.image.paste(text_image, amount_position)
 
     def add_sweet(self, sweet: Sweet):
-        print("add sweet", self._row, self._col)
         if self._row >= const.VERTICAL_AMOUNT:
             self._x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
             self._y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
