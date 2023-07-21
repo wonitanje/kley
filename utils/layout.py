@@ -11,16 +11,19 @@ from models.layout import LayoutConfig
 
 
 class Layout:
-    image = Image.new("RGB", [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255))
-    _x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
-    _y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
-    _row = _col = 0
-
     def __init__(
         self,
         image_url: Optional[str] = None,
         config: Optional[LayoutConfig] = None,
     ) -> None:
+        self.image = Image.new(
+            "RGB", [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255)
+        )
+        self._x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
+        self._y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
+        self._row = 0
+        self._col = 0
+
         if image_url:
             self.image = Image.open(get_bytes(image_url))
 
@@ -106,6 +109,7 @@ class Layout:
         self.image.paste(text_image, amount_position)
 
     def add_sweet(self, sweet: Sweet):
+        print("add sweet", self._row, self._col)
         if self._row >= const.VERTICAL_AMOUNT:
             self._x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
             self._y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN

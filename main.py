@@ -23,7 +23,10 @@ def create_offer(offer: OfferModel):
         doc.add_page(Layout(config=offer.config.layout))
 
     def add_sweet(sweet: Sweet):
-        return doc.page and doc.page.add_sweet(sweet)
+        if len(doc.pages) == 0:
+            return False
+
+        return doc.pages[-1].add_sweet(sweet)
 
     for model in offer.sweets:
         sweet = Sweet(model, config=offer.config.sweet)
@@ -39,4 +42,6 @@ def create_offer(offer: OfferModel):
         page.draw_amount(sweetsAmount)
         page.draw_numerator(idx + 1, pagesAmount)
 
-    return [FileResponse(path) for path in doc.save(uuid4())]
+    paths = doc.save(uuid4())
+    print(paths)
+    return [FileResponse(path) for path in paths]
