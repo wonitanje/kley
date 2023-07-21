@@ -9,6 +9,7 @@ cropped
 results
 txt
 
+.tempfile
 *.ini
 *.zip
 # *.png

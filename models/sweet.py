@@ -1,5 +1,3 @@
-from typing import Annotated
-from fastapi import File
 from pydantic import BaseModel
 
 import utils.constants as const
@@ -13,7 +11,7 @@ class SweetModel(BaseModel):
     weight: float
     price: float
     amount: int
-    image: Annotated[bytes, File()]
+    image_url: str
 
 
 class SweetConfig(BaseModel):

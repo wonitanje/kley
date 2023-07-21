@@ -1,9 +1,8 @@
 from uuid import uuid4
-from fastapi import FastAPI, Form, File, UploadFile
+from fastapi import FastAPI
 from fastapi.responses import FileResponse
-from collections import Counter
 
-from models.offer import ChangeOfferModel, OfferModel
+from models.offer import OfferModel
 from utils.doc import Doc
 from utils.layout import Layout
 from utils.sweet import Sweet
@@ -18,21 +17,19 @@ def read_root():
 
 @app.post("/offer")
 def create_offer(offer: OfferModel):
-    doc = Doc()
+    doc = Doc(config=offer.config)
 
     def add_page():
-        doc.add_page(Layout(offer.background))
+        doc.add_page(Layout(config=offer.config.layout))
 
     def add_sweet(sweet: Sweet):
-        print("add_sweet", sweet.name, doc.page)
         return doc.page and doc.page.add_sweet(sweet)
 
-    for name, amount in Counter(offer.sweets).items():
-        sweet = Sweet(name, amount)
+    for model in offer.sweets:
+        sweet = Sweet(model, config=offer.config.sweet)
         if not add_sweet(sweet):
             add_page()
             add_sweet(sweet)
-        sweet.picture.dispose()
 
     pagesAmount = len(doc.pages)
     sweetsAmount = len(offer.sweets)
@@ -43,18 +40,3 @@ def create_offer(offer: OfferModel):
         page.draw_numerator(idx + 1, pagesAmount)
 
     return [FileResponse(path) for path in doc.save(uuid4())]
-
-
-@app.patch("/offer")
-def modify_offer(changes: ChangeOfferModel):
-    doc = Doc(changes.file)
-    for page in doc.pages:
-        if changes.price:
-            page.draw_price(changes.price)
-
-    return [FileResponse(path) for path in doc.save(uuid4())]
-
-
-@app.post("/")
-def test(files: list[UploadFile] = File(), price: str = Form()):
-    return {"price": price, "files": [file.filename for file in files]}

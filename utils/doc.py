@@ -30,19 +30,18 @@ class Doc:
         self.page = layout
 
     def save(self, name: str) -> list[str]:
-        ext = (
-            ".pdf"
-            if self.format == OfferMimetype.pdf
-            else ".png"
-            if self.format == OfferMimetype.svg
-            else None
-        )
+        ext = None
+        if self.format == OfferMimetype.pdf:
+            ext = ".pdf"
+        if self.format == OfferMimetype.png:
+            ext = ".png"
         if ext is None:
             Exception("Unwkown doc format")
 
         path = f"results/{name}{ext}"
+        print(self.pages)
         images = [page.image for page in self.pages]
-        images[0].save(path, save_all=True, append_images=images)
+        images[0].save(path, save_all=True, append_images=images[1:])
 
         # return [page.save(f"{name}-{idx}.png") for idx, page in enumerate(self.pages)]
         return path

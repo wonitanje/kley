@@ -1,12 +1,11 @@
-from typing import Annotated
 from PIL import Image
-from fastapi import File
+
+from utils.service import get_bytes
 
 
 class Picture:
-    def __init__(self, file: Annotated[bytes, File()]) -> None:
-        self.image = Image.open(file).convert("RGBA")
-        self.image.load()
+    def __init__(self, image_url: str) -> None:
+        self.image = Image.open(get_bytes(image_url)).convert("RGBA")
 
     def save(self, name: str):
         return self.image.save(f"results/{name}")
@@ -30,6 +29,6 @@ class Picture:
                 else:
                     height = new_height
 
-        self.image = self.image.resize((width, height), resample=0)
+        self.image = self.image.resize((int(width), int(height)), resample=0)
         self.image.load()
         return self.image

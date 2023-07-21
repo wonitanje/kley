@@ -1,8 +1,6 @@
 from enum import Enum
-from typing import Optional
 from uuid import uuid4
-from fastapi import UploadFile, File, Form
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 from models.layout import LayoutConfig
 import mimetypes
 
@@ -27,10 +25,4 @@ class OfferModel(BaseModel):
     name: str = uuid4()
     weight: str
     price: str
-    background: HttpUrl
     config: OfferConfig
-
-
-class ChangeOfferModel(BaseModel):
-    price: Optional[str] = Form(...)
-    files: list[UploadFile] = File(...)

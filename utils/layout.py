@@ -1,12 +1,13 @@
 from math import ceil
-from typing import Annotated, Optional
-from fastapi import File
-from utils import to_multiline
+from typing import Optional
 from PIL import Image, ImageDraw, ImageFont
 
+
 import utils.constants as const
-from models.layout import LayoutConfig
+from utils import to_multiline
+from utils.service import get_bytes
 from utils.sweet import Sweet
+from models.layout import LayoutConfig
 
 
 class Layout:
@@ -17,18 +18,18 @@ class Layout:
 
     def __init__(
         self,
-        file: Optional[Annotated[bytes, File()]] = None,
+        image_url: Optional[str] = None,
         config: Optional[LayoutConfig] = None,
     ) -> None:
-        if file:
-            self.image = Image.open(file)
+        if image_url:
+            self.image = Image.open(get_bytes(image_url))
 
         if config:
             self.apply(config)
 
     def apply(self, config: LayoutConfig):
         layout_size = (config.width, config.height)
-        bg = Image.open(config.file)
+        bg = Image.open(get_bytes(config.image_url))
 
         if bg.size != layout_size:
             bg = bg.resize(layout_size)

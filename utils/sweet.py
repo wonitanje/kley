@@ -7,11 +7,13 @@ class Sweet:
     def __init__(self, model: SweetModel, config: Optional[SweetConfig] = None) -> None:
         self.name = model.name
         self.description = model.description
-        self.price = model.price
-        self.weight = model.weight
+        pr = model.price
+        self.price = int(pr) if int(pr) == pr else pr
+        wh = model.weight
+        self.weight = int(wh) if int(wh) == wh else wh
         self.sire = model.organization
         self.amount = model.amount
-        self.picture = Picture(self.name)
+        self.picture = Picture(model.image_url)
         if config:
             self.apply(config)
 
