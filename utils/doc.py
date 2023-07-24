@@ -26,25 +26,25 @@ class Doc:
     def add_page(self, layout: Layout):
         self.pages.append(layout)
 
-    def save(self, name: str) -> list[str]:
-        ext = None
-        if self.format == OfferMimetype.pdf:
-            ext = ".pdf"
-            path = f"results/{name}{ext}"
-            images = [page.image for page in self.pages]
-            images[0].save(path, save_all=True, append_images=images[1:])
+    def save(self, name: str) -> str:
+        # ext = None
+        # if self.format == OfferMimetype.pdf:
+        ext = ".pdf"
+        path = f"results/{name}{ext}"
+        images = [page.image for page in self.pages]
+        images[0].save(path, save_all=True, append_images=images[1:])
 
-            return [path]
+        return path
 
-        if self.format == OfferMimetype.png:
-            ext = ".png"
-            paths = []
-            for idx, page in enumerate(self.pages):
-                path = f"results/{name}-{idx + 1}{ext}"
-                page.image.save(path)
-                paths.append(path)
+        # if self.format == OfferMimetype.png:
+        #     ext = ".png"
+        #     paths = []
+        #     for idx, page in enumerate(self.pages):
+        #         path = f"results/{name}-{idx + 1}{ext}"
+        #         page.image.save(path)
+        #         paths.append(path)
 
-            return paths
+        #     return paths
 
-        if ext is None:
-            Exception("Unwkown doc format")
+        # if ext is None:
+        #     Exception("Unwkown doc format")
