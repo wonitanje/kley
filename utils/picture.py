@@ -5,12 +5,14 @@ from utils.service import get_bytes
 
 class Picture:
     def __init__(self, image_url: str) -> None:
-        self.image = Image.open(get_bytes(image_url)).convert("RGBA")
+        self.image = Image.open(get_bytes(image_url))
 
     def save(self, name: str):
         return self.image.save(f"results/{name}")
 
-    def resize(self, width: int, height: int, resolution: float):
+    def resize(self, size: tuple[int]):
+        width, height = size
+        resolution = width / height
         img_w, img_h = self.image.size
         img_resolution = img_w / img_h
         if img_resolution == 1:

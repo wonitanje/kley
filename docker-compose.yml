@@ -1,0 +1,17 @@
+version: '3'
+services:
+  app:
+    build: .
+    container_name: sweetforge-kley
+    ports:
+      - 8000:8103
+    restart: unless-stopped
+    networks:
+      - sweetforge
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  sweetforge:
+    external: true
+    name: sweetforge

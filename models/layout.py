@@ -3,7 +3,7 @@ import utils.constants as const
 
 
 class LayoutConfig(BaseModel):
-    width: int = const.LAYOUT_WIDTH
-    height: int = const.LAYOUT_HEIGHT
-    padding: tuple[int, int, int, int]
-    image_url: str
+    width: int = 3508
+    height: int = 2480
+    padding: tuple[int, int, int, int] = [170, 220, 170, 120]
+    image_url: str = "assets/bg.png"

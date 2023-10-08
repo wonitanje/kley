@@ -1,4 +1,5 @@
 from PIL import ImageFont
+from math import floor
 
 
 def to_multiline(line: str, font: ImageFont, width: int, lines=1000):
@@ -26,3 +27,14 @@ def to_multiline(line: str, font: ImageFont, width: int, lines=1000):
 
     line = "".join(map(lambda el: el if "\n" in el else f"{el} ", words))
     return line, shift
+
+
+def currency(price: float):
+    last = floor(price) % 10
+    if (price >= 10 and price < 20) or last > 5:
+        return "рублей"
+
+    if last == 1:
+        return "рубль"
+
+    return "рубля"

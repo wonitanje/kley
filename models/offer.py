@@ -1,8 +1,9 @@
 from enum import Enum
 from uuid import uuid4
 from pydantic import BaseModel
-from models.layout import LayoutConfig
 import mimetypes
+from models.layout import LayoutConfig
+from models.pack import PackModel
 
 from models.sweet import SweetConfig, SweetModel
 
@@ -16,13 +17,15 @@ class OfferMimetype(str, Enum):
 
 class OfferConfig(BaseModel):
     format: OfferMimetype
-    layout: LayoutConfig
-    sweet: SweetConfig
+    # layout: LayoutConfig
+    # sweet: SweetConfig
 
 
 class OfferModel(BaseModel):
     sweets: list[SweetModel]
+    packs: list[PackModel]
     name: str = uuid4()
-    weight: str
-    price: str
+    weight: int
+    price: int
+    layouts: dict[str, str]
     config: OfferConfig

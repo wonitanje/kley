@@ -9,13 +9,12 @@ class SweetModel(BaseModel):
     description: str
     organization: str
     weight: float
-    price: float
     amount: int
     image_url: str
 
 
 class SweetConfig(BaseModel):
-    width: float = const.BLOCK_WIDTH
-    height: float = const.BLOCK_HEIGHT
-    margin: float = const.BLOCK_MARGIN
+    width: int = const.BLOCK_WIDTH
+    height: int = const.BLOCK_HEIGHT
+    margin: int = const.BLOCK_MARGIN
     text: TextConfig
