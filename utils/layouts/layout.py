@@ -51,7 +51,7 @@ class Layout:
         )
         font = const.TEXT["NUMB"]
         text = f"{index} / {amount}"
-        text_width = font.getsize(text)[0]
+        text_width = font.getlength(text)
         size = (150, 60)
         position = ((size[0] - text_width) // 2, 0)
         text_image = self._generate_text(text, size, font, position)

@@ -1,3 +1,4 @@
+import os
 from typing import Annotated
 from fastapi import File
 from models.offer import OfferConfig, OfferMimetype
@@ -39,7 +40,10 @@ class Doc:
         # ext = None
         # if self.format == OfferMimetype.pdf:
         ext = ".pdf"
-        path = f"results/{name}{ext}"
+        output_dir = "results"
+        if not os.path.exists(output_dir):
+          os.makedirs(output_dir)
+        path = f"{output_dir}/{name}{ext}"
         images = [
             page.image if page.image.mode == "RGB" else page.image.convert("RGB")
             for page in self.pages

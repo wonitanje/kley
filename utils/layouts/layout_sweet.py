@@ -28,7 +28,8 @@ class LayoutSweet(Layout):
         old_price = floor(price / 0.85)
         text = f"{old_price} {currency(old_price)}"
         font = const.TEXT["INFO"]
-        text_size = font.getsize(text)
+        text_bbox = font.getbbox(text)
+        text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
         text_position = ((size[0] - text_size[0]) // 2, (size[1] - text_size[1]) // 2)
         text_image = self._generate_text(text, size, font, text_position, fill)
         # Line
@@ -45,7 +46,8 @@ class LayoutSweet(Layout):
             price_position[1],
         )
         text = "-15%"
-        text_size = font.getsize(text)
+        text_bbox = font.getbbox(text)
+        text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
         text_position = (0, (size[1] - text_size[1]) // 2)
         text_image = self._generate_text(text, size, font, text_position, fill)
         self.image.paste(text_image, sale_position)
@@ -57,7 +59,8 @@ class LayoutSweet(Layout):
         font = ImageFont.truetype(const.PRIMARY_FONT, 70)
         size = (400, 100)
         text = f"{price} {currency(price)}"
-        text_size = font.getsize(text)
+        text_bbox = font.getbbox(text)
+        text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
         text_position = ((size[0] - text_size[0]) // 2, 0)
         text_image = self._generate_text(text, size, font, text_position, fill)
         self.image.paste(text_image, discount_position)
@@ -71,7 +74,8 @@ class LayoutSweet(Layout):
         size = (400, 80)
         font = const.TEXT["INFO"]
         text = f"{weight} граммов"
-        text_size = font.getsize(text)
+        text_bbox = font.getbbox(text)
+        text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
         position = ((size[0] - text_size[0]) // 2, (size[1] - text_size[1]) // 2)
         text_image = self._generate_text(text, size, font, position, fill)
         self.image.paste(text_image, weight_position)
@@ -85,7 +89,8 @@ class LayoutSweet(Layout):
         size = (400, 80)
         fill = (255, 25, 31)
         text = f"{amount} штук"
-        text_size = font.getsize(text)
+        text_bbox = font.getbbox(text)
+        text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
         text_position = ((size[0] - text_size[0]) // 2, (size[1] - text_size[1]) // 2)
         text_image = self._generate_text(text, size, font, text_position, fill)
         self.image.paste(text_image, amount_position)
@@ -132,7 +137,7 @@ class LayoutSweet(Layout):
         )
 
         # Write amount
-        text_x = const.TEXT["SIRE"].getsize(sire)[0] + 10
+        text_x = const.TEXT["SIRE"].getlength(sire) + 10
         drawer.text(
             (text_x, text_y),
             f"{sweet.amount} шт",
@@ -142,7 +147,9 @@ class LayoutSweet(Layout):
 
         # Write amount
         text_x = 0
-        text_y += const.TEXT["ENUM"].getsize(sire)[1] + const.TEXT_MARGIN
+        text_bbox = const.TEXT["ENUM"].getbbox(sire)
+        text_height = text_bbox[3] - text_bbox[1]
+        text_y += text_height + const.TEXT_MARGIN
         name, shift = to_multiline(
             name, const.TEXT["NAME"], const.TEXT_WIDTH, const.NAME_LINES
         )

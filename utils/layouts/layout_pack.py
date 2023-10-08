@@ -56,7 +56,7 @@ class LayoutPack(Layout):
         size = (self.item_size[0], text_height)
 
         text = pack.name
-        text_width = font.getsize(text)[0]
+        text_width = font.getlength(text)
         text_position = ((size[0] - text_width) // 2, 0)
         text_image = self._generate_text(text, size, font, text_position)
         self.image.paste(text_image, position)
@@ -68,7 +68,7 @@ class LayoutPack(Layout):
         size = (self.item_size[0], text_height)
 
         text = f"Размер: {' x '.join([str(i // 10) for i in pack.size])} см"
-        text_width = font.getsize(text)[0]
+        text_width = font.getlength(text)
         text_position = ((size[0] - text_width) // 2, 0)
         text_image = self._generate_text(text, size, font, text_position)
         self.image.paste(text_image, position)
@@ -76,7 +76,7 @@ class LayoutPack(Layout):
 
         # Write material
         text = f"Материал: {pack.material}"
-        text_width = font.getsize(text)[0]
+        text_width = font.getlength(text)
         text_position = ((size[0] - text_width) // 2, 0)
         text_image = self._generate_text(text, size, font, text_position)
         self.image.paste(text_image, position)
