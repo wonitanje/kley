@@ -6,6 +6,7 @@ from utils.service import get_bytes
 class Picture:
     def __init__(self, image_url: str) -> None:
         self.image = Image.open(get_bytes(image_url))
+        self.source = image_url
 
     def save(self, name: str):
         return self.image.save(f"results/{name}")

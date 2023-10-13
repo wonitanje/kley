@@ -57,6 +57,11 @@ def create_offer(offer: OfferModel):
             return
         return doc.add_page(Model(image_url))
 
+    def add_raw_item(item: Pack | Attachment):
+        page_name = get_page_name(type(item))
+        Model = get_page_type(page_name)
+        doc.add_page(Model(item.picture.source))
+
     def add_item(item: Pack | Sweet | Attachment):
         page_name = get_page_name(type(item))
         Model = get_page_type(page_name)
@@ -74,7 +79,7 @@ def create_offer(offer: OfferModel):
 
     # Packs
     for model in offer.packs:
-        add_item(Pack(model))
+        add_raw_item(Pack(model))
 
     # Branding
     if offer.config.branding:
@@ -82,7 +87,7 @@ def create_offer(offer: OfferModel):
 
     # Attachments
     for model in offer.attachments:
-        add_item(Attachment(model))
+        add_raw_item(Attachment(model))
 
     # Sweets
     sweetsAmount = 0
