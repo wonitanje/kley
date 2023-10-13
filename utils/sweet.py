@@ -1,5 +1,4 @@
-from models.sweet import SweetConfig, SweetModel
-from utils import constants as const
+from models.sweet import SweetModel
 from utils.picture import Picture
 
 

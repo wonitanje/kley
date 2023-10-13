@@ -1,4 +1,4 @@
-from math import ceil, floor
+from math import floor
 from PIL import Image, ImageDraw, ImageFont
 
 from models.layout import LayoutConfig
@@ -19,8 +19,8 @@ class LayoutSweet(Layout):
     def draw_price(self, price: int):
         # Old price
         price_position = (
-            ceil(const.LAYOUT_WIDTH * 0.8),
-            ceil(const.LAYOUT_HEIGHT * 0.07),
+            round(self.image.size[0] * 0.8),
+            round(self.image.size[1] * 0.07),
         )
         fill = (255, 25, 31)
         size = (400, 80)
@@ -67,8 +67,8 @@ class LayoutSweet(Layout):
 
     def draw_weight(self, weight: int):
         weight_position = (
-            ceil(const.LAYOUT_WIDTH * 0.6357),
-            ceil(const.LAYOUT_HEIGHT * 0.07),
+            round(self.image.size[0] * 0.6357),
+            round(self.image.size[1] * 0.07),
         )
         fill = (255, 25, 31)
         size = (400, 80)
@@ -82,8 +82,8 @@ class LayoutSweet(Layout):
 
     def draw_amount(self, amount: int):
         amount_position = (
-            ceil(const.LAYOUT_WIDTH * 0.4775),
-            ceil(const.LAYOUT_HEIGHT * 0.07),
+            round(self.image.size[0] * 0.4775),
+            round(self.image.size[1] * 0.07),
         )
         font = const.TEXT["INFO"]
         size = (400, 80)

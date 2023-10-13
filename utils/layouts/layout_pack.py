@@ -1,6 +1,5 @@
-from math import ceil
 from models.layout import LayoutConfig
-from utils import constants as const, to_multiline
+from utils import constants as const
 
 from PIL import ImageFont
 from utils.layouts.layout import Layout
@@ -9,9 +8,9 @@ from utils.pack import Pack
 
 
 class LayoutPack(Layout):
-    def __init__(self, pack_amount: int = 1, image_url: str | None = None) -> None:
+    def __init__(self, image_url: str | None = None) -> None:
         super().__init__(image_url)
-        self.col_amount = min(pack_amount, 3)
+        self.col_amount = 1
         self._computeSize()
 
     def _computeSize(self):
