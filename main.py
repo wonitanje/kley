@@ -7,10 +7,10 @@ from fastapi.responses import FileResponse, JSONResponse
 
 from models.offer import OfferModel, Page
 from utils.doc import Doc
-from utils.layouts import Layout, LayoutPack, LayoutSweet
-from utils.layouts.layout_terms import LayoutTerms
+from utils.layouts import Layout, LayoutPack, LayoutSweet, LayoutAttachment, LayoutTerms
 from utils.pack import Pack
 from utils.sweet import Sweet
+from utils.attachment import Attachment
 
 app = FastAPI()
 
@@ -36,14 +36,15 @@ def create_offer(offer: OfferModel):
 
     def get_page_type(
         page_name: Page,
-    ) -> LayoutPack | LayoutSweet | LayoutTerms | Layout:
+    ) -> LayoutPack | LayoutSweet | LayoutAttachment | LayoutTerms | Layout:
         return {
             Page.pack: LayoutPack,
             Page.sweet: LayoutSweet,
+            Page.attachment: LayoutAttachment,
             Page.terms: LayoutTerms,
         }.get(page_name, Layout)
 
-    def get_page_name(ItemModel: Sweet | Pack):
+    def get_page_name(ItemModel: Pack | Sweet | Attachment):
         page = Page[ItemModel.__name__.lower()]
         if not page:
             raise RuntimeError("Unknown Page")
@@ -52,12 +53,11 @@ def create_offer(offer: OfferModel):
     def add_page(page_type: Page):
         Model = get_page_type(page_type)
         image_url = offer.layouts.get(page_type)
-        print(f"add_page {page_type=}, {Model=} {image_url=}")
         if not image_url:
             return
         return doc.add_page(Model(image_url))
 
-    def add_item(item: Sweet):
+    def add_item(item: Pack | Sweet | Attachment):
         page_name = get_page_name(type(item))
         Model = get_page_type(page_name)
         page = doc.get_last_page(Model)
@@ -65,9 +65,12 @@ def create_offer(offer: OfferModel):
             add_page(page_name)
             add_item(item)
 
-    # Info pages
-    add_page(Page.introduction)
-    add_page(Page.filling)
+    # Title
+    add_page(Page.title)
+
+    # Filling
+    if len(offer.attachments) > 1:
+        add_page(Page.filling)
 
     # Packs
     for model in offer.packs:
@@ -76,6 +79,10 @@ def create_offer(offer: OfferModel):
     # Branding
     if offer.config.branding:
         add_page(Page.branding)
+
+    # Attachments
+    for model in offer.attachments:
+        add_item(Attachment(model))
 
     # Sweets
     sweetsAmount = 0

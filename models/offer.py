@@ -3,14 +3,14 @@ from uuid import uuid4
 from pydantic import BaseModel
 import mimetypes
 from models.pack import PackModel
-
 from models.sweet import SweetModel
+from models.attachment import AttachmentModel
 
 mimetypes.init()
 
 
 class Page(str, Enum):
-    introduction = "introduction"
+    title = "title"
     branding = "branding"
     filling = "filling"
     pack = "pack"
@@ -35,8 +35,9 @@ class OfferConfig(BaseModel):
 
 
 class OfferModel(BaseModel):
-    sweets: list[SweetModel]
     packs: list[PackModel]
+    sweets: list[SweetModel]
+    attachments: list[AttachmentModel]
     name: str = uuid4()
     weight: int
     price: int
