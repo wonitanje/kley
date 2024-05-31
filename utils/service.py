@@ -1,7 +1,6 @@
 from requests import get
-
+from io import BytesIO
 
 def get_bytes(url: str):
-    with open(".tempfile", "wb") as file:
-        file.write(get(url).content)
-    return ".tempfile"
+    response = get(url)
+    return BytesIO(response.content)
