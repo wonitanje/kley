@@ -88,4 +88,7 @@ def create_offer(offer: OfferModel):
             page.draw_price(offer.price, offer.config.drawNoTax)
             page.draw_amount(sweetsAmount)
 
-    return FileResponse(doc.save(uuid4()))
+    docPath = doc.save(uuid4())
+    doc.close()
+
+    return FileResponse(docPath)

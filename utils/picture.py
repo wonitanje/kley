@@ -32,6 +32,13 @@ class Picture:
                 else:
                     height = new_height
 
-        self.image = self.image.resize((int(width), int(height)), resample=0)
+        newImg = self.image.resize((int(width), int(height)), resample=0)
+        self.image.close()
+
+        self.image = newImg
         self.image.load()
+
         return self.image
+
+    def close(self):
+        self.image.close()

@@ -55,3 +55,7 @@ class Layout:
         position = ((size[0] - text_width) // 2, 0)
         text_image = self._generate_text(text, size, font, position)
         self.image.paste(text_image, numerator_position)
+        text_image.close()
+
+    def close(self):
+        self.image.close()

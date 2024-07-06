@@ -36,6 +36,10 @@ class Doc:
         if len(pages) > 0:
             return pages[-1]
 
+    def close(self): 
+        for page in self.pages:
+            page.close()
+
     def save(self, name: str) -> str:
         # ext = None
         # if self.format == OfferMimetype.pdf:

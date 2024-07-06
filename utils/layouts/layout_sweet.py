@@ -78,6 +78,7 @@ class LayoutSweet(Layout):
             drawer.line(shape, fill=(0, 0, 0), width=8)
 
         self.image.paste(area, pos)
+        area.close()
 
         return (pos, [i + size[idx] for idx, i in enumerate(pos)])
 
@@ -98,6 +99,7 @@ class LayoutSweet(Layout):
         # text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
         # text_image = self._generate_text(text, size, font, (0, 4), fill)
         # self.image.paste(text_image, sale_position)
+        # text_image.close()
 
         discount_position = (bbox[0][0], bbox[1][1] + 8)
         font = ImageFont.truetype(const.PRIMARY_FONT, 70)
@@ -107,6 +109,7 @@ class LayoutSweet(Layout):
         text_position = ((size[0] - text_size[0]) // 2, 0)
         text_image = self._generate_text(text, size, font, text_position, fill)
         self.image.paste(text_image, discount_position)
+        text_image.close()
 
     def draw_weight(self, weight: int):
         self.draw_area(Area.weight, f"{weight} грамм")
@@ -137,6 +140,8 @@ class LayoutSweet(Layout):
             self.image.paste(img, img_centred, mask=img.split()[3])
         except:
             self.image.paste(img, img_centred)
+        finally:
+            img.close()
 
         # Draw text
         sire = sweet.sire
