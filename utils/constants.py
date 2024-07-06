@@ -36,6 +36,7 @@ if exists:
     TEXT["INFO"] = ImageFont.truetype(
         PRIMARY_FONT, int(config["TEXT"].get("INFO", default.INFO_SIZE))
     )
+    TEXT["AREA"] = ImageFont.truetype(SECOND_FONT, 40)
     TEXT_MARGIN = int(config["TEXT"].get("MARGIN", default.TEXT_MARGIN))
     NAME_LINES = int(config["TEXT"].get("NAME_MAX_LINES", default.NAME_LINES))
 else:
@@ -46,6 +47,7 @@ else:
         "DESC": ImageFont.truetype(PRIMARY_FONT, default.DESC_SIZE),
         "NUMB": ImageFont.truetype(SECOND_FONT, default.NUMERATOR_SIZE),
         "INFO": ImageFont.truetype(SECOND_FONT, default.INFO_SIZE),
+        "AREA": ImageFont.truetype(SECOND_FONT, 40),
     }
     TEXT_MARGIN = default.TEXT_MARGIN
     NAME_LINES = default.NAME_LINES

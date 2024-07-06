@@ -30,6 +30,7 @@ class OfferConfig(BaseModel):
     until_date: str
     delivery_date: tuple[str, str]
     payment_term: str
+    drawNoTax: bool = False
     # layout: LayoutConfig
     # sweet: SweetConfig
 

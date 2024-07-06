@@ -30,12 +30,20 @@ def to_multiline(line: str, font: ImageFont, width: int, lines=1000):
     return line, shift
 
 
-def currency(price: float):
-    last = floor(price) % 10
-    if (price >= 10 and price < 20) or last > 5:
-        return "рублей"
+def numerate(variants: tuple[str, str, str]):
+    def get(value: int | float):
+        value = float(value)
+        last = floor(value) % 10
+        if (value >= 10 and value < 20) or last >= 5:
+            return variants[2]
 
-    if last == 1:
-        return "рубль"
+        if last == 1:
+            return variants[0]
 
-    return "рубля"
+        return variants[1]
+
+    return get
+
+
+currency = numerate(["рубль", "рубля", "рублей"])
+counter = numerate(["штука", "штуки", "штук"])
