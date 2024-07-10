@@ -85,7 +85,7 @@ def create_offer(offer: OfferModel):
         page.draw_numerator(idx + 2, pagesAmount)
         if type(page) == LayoutSweet:
             page.draw_weight(offer.weight)
-            page.draw_price(offer.price, offer.config.drawNoTax)
+            page.draw_price(offer.price, offer.config.draw_no_tax)
             page.draw_amount(sweetsAmount)
 
     docPath = doc.save(uuid4())
