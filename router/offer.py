@@ -57,7 +57,7 @@ def create_offer(offer: OfferModel):
 
     # Packs
     for model in offer.packs:
-        add_raw_item(Pack(model))
+        add_item(Pack(model))
 
     # Branding
     if offer.config.branding:
@@ -65,7 +65,7 @@ def create_offer(offer: OfferModel):
 
     # Attachments
     for model in offer.attachments:
-        add_raw_item(Attachment(model))
+        add_item(Attachment(model))
 
     # Sweets
     sweetsAmount = 0
