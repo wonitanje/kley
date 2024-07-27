@@ -1,5 +1,4 @@
 from uuid import uuid4
-from fastapi.responses import FileResponse
 
 from models.offer import OfferModel, Page
 from utils.doc import Doc
@@ -91,4 +90,4 @@ def create_offer(offer: OfferModel):
     docPath = doc.save(uuid4())
     doc.close()
 
-    return FileResponse(docPath)
+    return docPath

@@ -6,6 +6,8 @@ services:
     restart: unless-stopped
     networks:
       - sweetforge
+    volumes:
+      - ./results:/results
 
 networks:
   sweetforge:

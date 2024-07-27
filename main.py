@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from models.offer import OfferConfig, OfferModel
 from models.sweet import SweetModel
@@ -27,7 +27,7 @@ def read_root():
 
 @app.post("/offer")
 def post_offer(body: OfferModel):
-    create_offer(body)
+    return FileResponse(create_offer(body))
 
 
 # for test
