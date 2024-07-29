@@ -5,7 +5,10 @@ from utils.service import get_bytes
 
 class Picture:
     def __init__(self, image_url: str) -> None:
-        self.image = Image.open(get_bytes(image_url))
+        try:
+          self.image = Image.open(get_bytes(image_url))
+        except:
+          self.image = Image.open('assets/no-image.webp')
         self.source = image_url
 
     def save(self, name: str):

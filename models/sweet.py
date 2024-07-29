@@ -10,7 +10,7 @@ class SweetModel(BaseModel):
     organization: str
     weight: float
     amount: int
-    image_url: str
+    image_url: str = None
 
 
 class SweetConfig(BaseModel):

@@ -5,4 +5,4 @@ class PackModel(BaseModel):
     name: str
     size: tuple[float, float, float]
     material: str
-    image_url: str
+    image_url: str = None
