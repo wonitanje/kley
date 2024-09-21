@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from models.offer import OfferModel, Page
+from models.offer_model import OfferModel, Page
 from utils.doc import Doc
 from utils.layouts import Layout, LayoutPack, LayoutSweet, LayoutAttachment, LayoutTerms
 from utils.pack import Pack
@@ -30,12 +30,12 @@ def create_offer(offer: OfferModel):
         image_url = offer.layouts.get(page_type)
         if not image_url:
             return
-        return doc.add_page(Model(image_url))
+        return doc.add_page(Model(page_type, image_url))
 
     def add_raw_item(item: Pack | Attachment):
         page_name = get_page_name(type(item))
         Model = get_page_type(page_name)
-        doc.add_page(Model(item.picture.source))
+        doc.add_page(Model(page_type, item.picture.source))
 
     def add_item(item: Pack | Sweet | Attachment):
         page_name = get_page_name(type(item))
@@ -80,12 +80,17 @@ def create_offer(offer: OfferModel):
         terms.set_payment_term(offer.config.payment_term)
 
     pagesAmount = len(doc.pages)
-    for idx, page in enumerate(doc.pages[0:]):
-        page.draw_numerator(idx + 2, pagesAmount)
-        if type(page) == LayoutSweet:
-            page.draw_weight(offer.weight)
-            page.draw_price(offer.price, offer.config.draw_no_tax)
-            page.draw_amount(sweetsAmount)
+    for idx, page in enumerate(doc.pages):
+        match page.name:
+            case Page.title | Page.terms:
+                continue
+
+            case Page.sweet:
+                page.draw_weight(offer.weight)
+                page.draw_price(offer.price, offer.config.draw_no_tax)
+                page.draw_amount(sweetsAmount)
+
+        page.draw_numerator(idx + 1, pagesAmount)
 
     docPath = doc.save(uuid4())
     doc.close()

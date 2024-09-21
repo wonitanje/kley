@@ -1,4 +1,4 @@
-from models.pack import PackModel
+from models.pack_model import PackModel
 from utils.picture import Picture
 
 

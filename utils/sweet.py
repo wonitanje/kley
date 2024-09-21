@@ -1,4 +1,4 @@
-from models.sweet import SweetModel
+from models.sweet_model import SweetModel
 from utils.picture import Picture
 
 

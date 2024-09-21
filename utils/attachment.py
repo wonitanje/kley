@@ -1,4 +1,4 @@
-from models.attachment import AttachmentModel
+from models.attachment_model import AttachmentModel
 from utils.picture import Picture
 
 

@@ -5,8 +5,8 @@ from datetime import datetime
 
 
 class LayoutTerms(Layout):
-    def __init__(self, image_url: str | None = None) -> None:
-        super().__init__(image_url)
+    def __init__(self, name: str, image_url: str | None = None) -> None:
+        super().__init__(name, image_url)
         self.font = const.TEXT["NUMB"]
         self.fill = (0, 0, 0)
         self.shift = (0, 0)

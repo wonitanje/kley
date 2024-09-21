@@ -3,9 +3,9 @@ from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 
-from models.offer import OfferConfig, OfferModel
-from models.sweet import SweetModel
-from router.offer import create_offer
+from models.offer_model import OfferConfig, OfferModel
+from models.sweet_model import SweetModel
+from router.offer_router import create_offer
 
 app = FastAPI()
 

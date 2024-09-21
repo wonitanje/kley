@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 import utils.constants as const
-from models.text import TextConfig
+from models.text_model import TextConfig
 
 
 class SweetModel(BaseModel):

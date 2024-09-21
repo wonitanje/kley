@@ -2,17 +2,18 @@ from PIL import Image, ImageFont, ImageDraw
 
 import utils.constants as const
 from utils.service import get_bytes
-from models.layout import LayoutConfig
+from models.layout_model import LayoutConfig
 
 
 class Layout:
-    def __init__(self, image_url: str | None = None) -> None:
+    def __init__(self, name: str, image_url: str | None = None) -> None:
         if image_url:
             self.image = Image.open(get_bytes(image_url))
         else:
             self.image = Image.new(
                 "RGB", [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255)
             )
+        self.name = name
         self._x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
         self._y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
         self._row = 0

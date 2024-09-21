@@ -1,15 +1,13 @@
-from models.layout import LayoutConfig
-from utils import constants as const
-
 from PIL import ImageFont
+from models.layout_model import LayoutConfig
+from utils import constants as const
 from utils.layouts.layout import Layout
-
 from utils.pack import Pack
 
 
 class LayoutPack(Layout):
-    def __init__(self, image_url: str | None = None) -> None:
-        super().__init__(image_url)
+    def __init__(self, name: str, image_url: str | None = None) -> None:
+        super().__init__(name, image_url)
         self.col_amount = 1
         self._computeSize()
 

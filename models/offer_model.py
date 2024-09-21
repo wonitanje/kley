@@ -2,9 +2,9 @@ from enum import Enum
 from uuid import uuid4
 from pydantic import BaseModel
 import mimetypes
-from models.pack import PackModel
-from models.sweet import SweetModel
-from models.attachment import AttachmentModel
+from models.pack_model import PackModel
+from models.sweet_model import SweetModel
+from models.attachment_model import AttachmentModel
 
 mimetypes.init()
 

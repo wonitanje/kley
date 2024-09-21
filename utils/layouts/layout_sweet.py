@@ -2,7 +2,7 @@ from enum import Enum
 from math import floor
 from PIL import Image, ImageDraw, ImageFont
 
-from models.layout import LayoutConfig
+from models.layout_model import LayoutConfig
 from utils import constants as const, currency, counter, to_multiline
 from utils.sweet import Sweet
 from utils.layouts.layout import Layout
@@ -20,9 +20,10 @@ area_titles = ("Количество конфет", "Вес подарка", "Ц
 
 class LayoutSweet(Layout):
     def __init__(
-        self, image_url: str | None = None, config: LayoutConfig | None = None
+        self, name: str, image_url: str | None = None, config: LayoutConfig | None = None
     ) -> None:
-        super().__init__(image_url)
+        super().__init__(name, image_url)
+        print(name, image_url)
 
         if config:
             self.apply(config)
@@ -33,14 +34,17 @@ class LayoutSweet(Layout):
         data: str,
         line_through: bool = False,
     ) -> tuple[tuple[int, int], tuple[int, int]]:
-        size = (432, 174)
-        initial_pos = (1480, 90)
+        size = [440, 174]
+        initial_pos = (1100, 90)
         padding = 50
         idx = title.value
         pos = (
             initial_pos[0] + (size[0] + padding) * idx,
             initial_pos[1],
         )
+        if title == Area.noTaxPrice:
+            size[0] = 520
+
         area = Image.new("RGBA", size=size, color=(255, 255, 255))
         drawer = ImageDraw.Draw(area)
         drawer.rounded_rectangle(
@@ -84,7 +88,8 @@ class LayoutSweet(Layout):
 
     def draw_price(self, price: int, addNoTax: bool):
         if addNoTax:
-            self.draw_area(Area.noTaxPrice, f"{price * 100 / 120}")
+            noTaxPrice = round(price * 100 / 120, 2)
+            self.draw_area(Area.noTaxPrice, f"{noTaxPrice} {currency(noTaxPrice)}")
 
         old_price = floor(price / 0.85)
         bbox = self.draw_area(Area.price, f"{old_price} {currency(old_price)}", True)

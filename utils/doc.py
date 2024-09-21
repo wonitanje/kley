@@ -1,7 +1,7 @@
 import os
 from typing import Annotated
 from fastapi import File
-from models.offer import OfferConfig, OfferMimetype
+from models.offer_model import OfferConfig, OfferMimetype
 from utils.layouts.layout import Layout
 
 
