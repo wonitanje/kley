@@ -2,12 +2,12 @@ from enum import Enum
 from uuid import uuid4
 from pydantic import BaseModel
 import mimetypes
+
 from models.pack_model import PackModel
-from models.sweet_model import SweetModel
+from models.sweet_model import SweetModel, SweetConfig
 from models.attachment_model import AttachmentModel
 
 mimetypes.init()
-
 
 class Page(str, Enum):
     title = "title"
@@ -31,8 +31,8 @@ class OfferConfig(BaseModel):
     delivery_date: tuple[str, str]
     payment_term: str
     draw_no_tax: bool = False
+    sweet: SweetConfig
     # layout: LayoutConfig
-    # sweet: SweetConfig
 
 
 class OfferModel(BaseModel):

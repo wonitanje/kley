@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from models.sweet_model import SweetConfig
 from models.offer_model import OfferModel, Page
 from utils.doc import Doc
 from utils.layouts import Layout, LayoutPack, LayoutSweet, LayoutAttachment, LayoutTerms
@@ -19,18 +20,21 @@ def create_offer(offer: OfferModel):
             Page.terms: LayoutTerms,
         }.get(page_name, Layout)
 
-    def get_page_name(ItemModel: Pack | Sweet | Attachment):
+    def get_page_name(ItemModel: Pack | Sweet | Attachment) -> Page:
         page = Page[ItemModel.__name__.lower()]
         if not page:
             raise RuntimeError("Unknown Page")
         return page
 
-    def add_page(page_type: Page):
+    def create_page(Model: Layout, page_type: Page, image_url: str, sweet_cfg: SweetConfig) -> Layout:
+        return Model(page_type, sweet_cfg, image_url) if Model == LayoutSweet else Model(page_type, image_url)
+
+    def add_page(page_type: Page) -> Layout | None:
         Model = get_page_type(page_type)
         image_url = offer.layouts.get(page_type)
-        if not image_url:
-            return
-        return doc.add_page(Model(page_type, image_url))
+        if image_url:
+            page = create_page(Model, page_type, image_url, offer.config.sweet)
+            return doc.add_page(page)
 
     def add_raw_item(item: Pack | Attachment):
         page_name = get_page_name(type(item))

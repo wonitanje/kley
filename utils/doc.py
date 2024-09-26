@@ -24,19 +24,19 @@ class Doc:
         [page.apply(config.layout) for page in self.pages]
         self.format = config.format
 
-    def add_page(self, layout: Layout):
+    def add_page(self, layout: Layout) -> Layout:
         self.pages.append(layout)
         return layout
 
-    def get_pages(self, LayoutModel: Layout):
+    def get_pages(self, LayoutModel: Layout)  -> list[Layout]:
         return list(filter(lambda x: type(x) == LayoutModel, self.pages))
 
-    def get_last_page(self, LayoutModel: Layout):
+    def get_last_page(self, LayoutModel: Layout) -> Layout:
         pages = self.get_pages(LayoutModel)
         if len(pages) > 0:
             return pages[-1]
 
-    def close(self): 
+    def close(self):
         for page in self.pages:
             page.close()
 

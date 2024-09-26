@@ -2,6 +2,7 @@ from enum import Enum
 from math import floor
 from PIL import Image, ImageDraw, ImageFont
 
+from models.sweet_model import SweetConfig, Direction
 from models.layout_model import LayoutConfig
 from utils import constants as const, currency, counter, to_multiline
 from utils.sweet import Sweet
@@ -20,10 +21,10 @@ area_titles = ("Количество конфет", "Вес подарка", "Ц
 
 class LayoutSweet(Layout):
     def __init__(
-        self, name: str, image_url: str | None = None, config: LayoutConfig | None = None
+        self, name: str, sweet_cfg: SweetConfig, image_url: str | None = None, config: LayoutConfig | None = None
     ) -> None:
         super().__init__(name, image_url)
-        print(name, image_url)
+        self.sweet_cfg = sweet_cfg
 
         if config:
             self.apply(config)
@@ -91,8 +92,8 @@ class LayoutSweet(Layout):
             noTaxPrice = round(price * 100 / 120, 2)
             self.draw_area(Area.noTaxPrice, f"{noTaxPrice} {currency(noTaxPrice)}")
 
-        old_price = floor(price / 0.85)
-        bbox = self.draw_area(Area.price, f"{old_price} {currency(old_price)}", True)
+        old_price = price # temp commented floor(price / 0.85)
+        bbox = self.draw_area(Area.price, f"{old_price} {currency(old_price)}", False) # temp commented True
 
         size = (bbox[1][0] - bbox[0][0], bbox[1][1] - bbox[0][1])
         fill = (0, 0, 0)
@@ -106,15 +107,16 @@ class LayoutSweet(Layout):
         # self.image.paste(text_image, sale_position)
         # text_image.close()
 
-        discount_position = (bbox[0][0], bbox[1][1] + 8)
-        font = ImageFont.truetype(const.PRIMARY_FONT, 70)
-        text = f"{price} {currency(price)}"
-        text_bbox = font.getbbox(text)
-        text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
-        text_position = ((size[0] - text_size[0]) // 2, 0)
-        text_image = self._generate_text(text, size, font, text_position, fill)
-        self.image.paste(text_image, discount_position)
-        text_image.close()
+        # temp commented
+        # discount_position = (bbox[0][0], bbox[1][1] + 8)
+        # font = ImageFont.truetype(const.PRIMARY_FONT, 70)
+        # text = f"{price} {currency(price)}"
+        # text_bbox = font.getbbox(text)
+        # text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
+        # text_position = ((size[0] - text_size[0]) // 2, 0)
+        # text_image = self._generate_text(text, size, font, text_position, fill)
+        # self.image.paste(text_image, discount_position)
+        # text_image.close()
 
     def draw_weight(self, weight: int):
         self.draw_area(Area.weight, f"{weight} грамм")
@@ -123,17 +125,26 @@ class LayoutSweet(Layout):
         self.draw_area(Area.amount, f"{amount} {counter(amount)}")
 
     def add_item(self, sweet: Sweet):
-        if self._row >= const.VERTICAL_AMOUNT:
-            self._x_offset += const.BLOCK_WIDTH + const.BLOCK_MARGIN
-            self._y_offset = const.LAYOUT_PADDING_TOP + const.BLOCK_MARGIN
-            self._col += 1
-            self._row = 0
-        if self._col >= const.HORIZONTAL_AMOUNT:
-            return False
+        if self.sweet_cfg.direction == Direction.Vertical:
+            if self._row >= const.VERTICAL_AMOUNT:
+                self._x_offset += self.sweet_cfg.width + self.sweet_cfg.margin
+                self._y_offset = const.LAYOUT_PADDING_TOP + self.sweet_cfg.margin
+                self._col += 1
+                self._row = 0
+            if self._col >= const.HORIZONTAL_AMOUNT:
+                return False
+        else:
+            if self._col >= const.HORIZONTAL_AMOUNT:
+                self._x_offset = const.LAYOUT_PADDING_HORIZONTAL + self.sweet_cfg.margin
+                self._y_offset += self.sweet_cfg.height + self.sweet_cfg.margin
+                self._col = 0
+                self._row += 1
+            if self._row >= const.VERTICAL_AMOUNT:
+                return False
 
         # Defines
-        img_size = (const.IMAGE_WIDTH, const.BLOCK_HEIGHT)
-        text_size = (const.TEXT_WIDTH, const.BLOCK_HEIGHT)
+        img_size = (const.IMAGE_WIDTH, self.sweet_cfg.height)
+        text_size = (const.TEXT_WIDTH, self.sweet_cfg.height)
 
         # Draw image
         img = sweet.picture.resize(img_size)
@@ -198,12 +209,16 @@ class LayoutSweet(Layout):
         # Draw text
         text_img = text_img.crop((0, 0, const.TEXT_WIDTH, text_height))
         text_x = self._x_offset + const.IMAGE_WIDTH + const.IMAGE_TEXT_MARGIN
-        text_y = self._y_offset + (const.BLOCK_HEIGHT - text_height) // 2
+        text_y = self._y_offset + (self.sweet_cfg.height - text_height) // 2
         self.image.paste(text_img, (text_x, text_y))
         text_img.close()
 
         # Shift to next node
-        self._row += 1
-        self._y_offset += const.BLOCK_HEIGHT + const.BLOCK_MARGIN
+        if self.sweet_cfg.direction == Direction.Vertical:
+          self._row += 1
+          self._y_offset += self.sweet_cfg.height + self.sweet_cfg.margin
+        else:
+          self._col += 1
+          self._x_offset += self.sweet_cfg.width + self.sweet_cfg.margin
 
         return True
