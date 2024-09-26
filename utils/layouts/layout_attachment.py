@@ -64,7 +64,7 @@ class LayoutAttachment(Layout):
         text_height = 60
         size = (self.item_size[0], text_height)
 
-        text = f"Размер: {' x '.join([str(i // 10) for i in attachment.size])} см"
+        text = f"Размер: {'x'.join([str(int(i)) for i in filter(lambda x: x != 0, attachment.size)])}см"
         text_width = font.getlength(text)
         text_position = ((size[0] - text_width) // 2, 0)
         text_image = self._generate_text(text, size, font, text_position)
