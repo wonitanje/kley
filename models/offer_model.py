@@ -1,5 +1,5 @@
 from enum import Enum
-from uuid import uuid4
+from uuid import UUID, uuid4
 from pydantic import BaseModel
 import mimetypes
 
@@ -39,7 +39,7 @@ class OfferModel(BaseModel):
     packs: list[PackModel]
     sweets: list[SweetModel]
     attachments: list[AttachmentModel]
-    name: str = uuid4()
+    name: UUID = uuid4()
     weight: int
     price: int
     layouts: dict[Page, str]
