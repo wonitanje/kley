@@ -8,10 +8,11 @@ from models.layout_model import LayoutConfig
 class Layout:
     def __init__(self, name: str, image_url: str | None = None) -> None:
         if image_url:
-            self.image = Image.open(get_bytes(image_url))
+            img = Image.open(get_bytes(image_url))
+            self.image = img if img.mode == "RGBA" else img.convert("RGBA")
         else:
             self.image = Image.new(
-                "RGB", [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255)
+                "RGBA", [const.LAYOUT_WIDTH, const.LAYOUT_HEIGHT], (255, 255, 255)
             )
         self.name = name
         self._x_offset = const.LAYOUT_PADDING_HORIZONTAL + const.BLOCK_MARGIN
@@ -26,9 +27,10 @@ class Layout:
         font: ImageFont,
         position: tuple[int, int] = (0, 0),
         fill: tuple[int, int, int] = (3, 3, 3),
+        background: tuple[int, int, int, int | None] = (255, 255, 255)
     ):
-        image = Image.new("RGB", size, (255, 255, 255))
-        drawer = ImageDraw.Draw(image)
+        image = Image.new("RGBA", size, background)
+        drawer = ImageDraw.Draw(image, "RGBA")
         drawer.text(position, text, font=font, fill=fill)
         return image
 

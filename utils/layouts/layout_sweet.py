@@ -14,9 +14,10 @@ class Area(int, Enum):
     weight = 1
     price = 2
     noTaxPrice = 3
+    salePrice = 4
 
 
-area_titles = ("Количество конфет", "Вес подарка", "Цена подарка", "Цена без НДС")
+area_titles = (("Количество конфет", None), ("Вес подарка", None), ("Цена подарка", None), ("Цена без НДС", "с учетом скидки"), ("Цена со скидкой", None))
 
 
 class LayoutSweet(Layout):
@@ -36,15 +37,15 @@ class LayoutSweet(Layout):
         line_through: bool = False,
     ) -> tuple[tuple[int, int], tuple[int, int]]:
         size = [440, 174]
-        initial_pos = (1100, 90)
+        initial_pos = (1050, 90)
         padding = 50
         idx = title.value
+        pos_idx = title.value - 1 if title == Area.salePrice else title.value
+
         pos = (
-            initial_pos[0] + (size[0] + padding) * idx,
+            initial_pos[0] + (size[0] + padding) * pos_idx,
             initial_pos[1],
         )
-        if title == Area.noTaxPrice:
-            size[0] = 520
 
         area = Image.new("RGBA", size=size, color=(255, 255, 255))
         drawer = ImageDraw.Draw(area)
@@ -56,16 +57,27 @@ class LayoutSweet(Layout):
         )
 
         # Title
+        [title, subtitle] = area_titles[idx]
         font = const.TEXT["AREA"]
-        text = area_titles[idx]
-        width = font.getlength(text)
+        width = font.getlength(title)
         drawer.text(
-            xy=((size[0] - width) / 2, 12),
+            xy=((size[0] - width) / 2, 0 if subtitle else 12),
             align="center",
             fill="black",
             font=font,
-            text=text,
+            text=title,
         )
+
+        if subtitle:
+          font = const.TEXT["DESC"]
+          width = font.getlength(subtitle)
+          drawer.text(
+              xy=((size[0] - width) / 2, 48),
+              align="center",
+              fill="black",
+              font=font,
+              text=subtitle,
+          )
 
         # Text
         font = const.TEXT["INFO"]
@@ -87,36 +99,26 @@ class LayoutSweet(Layout):
 
         return (pos, [i + size[idx] for idx, i in enumerate(pos)])
 
-    def draw_price(self, price: int, addNoTax: bool):
-        if addNoTax:
-            noTaxPrice = round(price * 100 / 120, 2)
+    def draw_price(self, salePrice: int, addNoTax: bool):
+        full_price = round(salePrice / 0.85, 2)
+        bbox = self.draw_area(Area.price, f"{full_price} {currency(full_price)}", True)
+
+        if not addNoTax:
+            self.draw_area(Area.salePrice, f"{salePrice} {currency(salePrice)}")
+        else:
+            noTaxPrice = round(salePrice * 100 / 120, 2)
             self.draw_area(Area.noTaxPrice, f"{noTaxPrice} {currency(noTaxPrice)}")
 
-        old_price = price # temp commented floor(price / 0.85)
-        bbox = self.draw_area(Area.price, f"{old_price} {currency(old_price)}", False) # temp commented True
-
-        size = (bbox[1][0] - bbox[0][0], bbox[1][1] - bbox[0][1])
-        fill = (0, 0, 0)
-
-        # font = const.TEXT["INFO"]
-        # sale_position = (bbox[1][0] + 24, bbox[1][1] + 8)
-        # text = "-15%"
-        # text_bbox = font.getbbox(text)
-        # text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
-        # text_image = self._generate_text(text, size, font, (0, 4), fill)
-        # self.image.paste(text_image, sale_position)
-        # text_image.close()
-
-        # temp commented
-        # discount_position = (bbox[0][0], bbox[1][1] + 8)
-        # font = ImageFont.truetype(const.PRIMARY_FONT, 70)
-        # text = f"{price} {currency(price)}"
-        # text_bbox = font.getbbox(text)
-        # text_size = (text_bbox[0] + text_bbox[2], text_bbox[1] + text_bbox[3])
-        # text_position = ((size[0] - text_size[0]) // 2, 0)
-        # text_image = self._generate_text(text, size, font, text_position, fill)
-        # self.image.paste(text_image, discount_position)
-        # text_image.close()
+            # compact sale price
+            discount_position = (2980, bbox[0][1] + (bbox[1][1] - bbox[0][1]) // 2 + 8)
+            size = (bbox[1][0] - bbox[0][0], (bbox[1][1] - bbox[0][1]) // 2)
+            fill = (0, 0, 0)
+            font = ImageFont.truetype(const.PRIMARY_FONT, 80)
+            text = f"{salePrice} {currency(salePrice)}"
+            text_position = (0, 0)
+            text_image = self._generate_text(text, size, font, text_position, fill, (255, 255, 255, 0))
+            self.image.paste(text_image, discount_position, text_image)
+            text_image.close()
 
     def draw_weight(self, weight: int):
         self.draw_area(Area.weight, f"{weight} грамм")

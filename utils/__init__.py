@@ -30,20 +30,23 @@ def to_multiline(line: str, font: ImageFont, width: int, lines=1000):
     return line, shift
 
 
-def numerate(variants: tuple[str, str, str]):
+def plural(forms: tuple[str, str, str]):
+    def same(_: int | float):
+        return forms[0]
+
     def get(value: int | float):
-        value = float(value)
-        last = floor(value) % 10
-        if (value >= 10 and value < 20) or last >= 5:
-            return variants[2]
+        two_periods = float(value) % 100
+        first_period = floor(two_periods) % 10
+        if (two_periods >= 10 and two_periods < 20) or first_period >= 5:
+            return forms[2]
 
-        if last == 1:
-            return variants[0]
+        if first_period == 1:
+            return forms[0]
 
-        return variants[1]
+        return forms[1]
 
-    return get
+    return same if len(set(forms)) == 1 else get
 
 
-currency = numerate(["рубль", "рубля", "рублей"])
-counter = numerate(["штука", "штуки", "штук"])
+currency = plural(["руб", "руб", "руб"]) # numerate(["рубль", "рубля", "рублей"])
+counter = plural(["штука", "штуки", "штук"])
